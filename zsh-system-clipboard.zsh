@@ -7,6 +7,16 @@
 ##
 
 function _zsh_system_clipboard_api() {
+	function _console.error() {
+		echo -e "\n\n  \033[41;37m ERROR \033[0m \033[01mzsh-system-clipboard:\033[0m $@\n" >&2
+		return true
+	}
+
+	function _console.error_and_suggest_to_install() {
+		_console.error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
+		return true
+	}
+
 	local -A CLIPBOARD
 
 	function determinate_clipboard_manager() {
@@ -15,6 +25,8 @@ function _zsh_system_clipboard_api() {
 				if (hash pbcopy 2>/dev/null && hash pbpaste 2>/dev/null) {
 					typeset -g CLIPBOARD[set]='pbcopy'
 					typeset -g CLIPBOARD[get]='pbpaste'
+				} else {
+					_console.error_and_suggest_to_install 'pbcopy, pbpaste'
 				}
 				;;
 
@@ -22,14 +34,22 @@ function _zsh_system_clipboard_api() {
 				if (hash termux-clipboard-set 2>/dev/null && hash termux-clipboard-get 2>/dev/null) {
 					typeset -g CLIPBOARD[set]='termux-clipboard-set'
 					typeset -g CLIPBOARD[get]='termux-clipboard-get'
+				} else {
+					_console.error_and_suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
 				}
 				;;
 
 			linux*)
 				if (hash xsel 2>/dev/null) {
-					typeset -g CLIPBOARD[set]='xsel --clipboard --input'
-					typeset -g CLIPBOARD[get]='xsel --clipboard'
+					typeset -g CLIPBOARD[set]='xclip -in'
+					typeset -g CLIPBOARD[get]='xclip -out'
+				} else {
+					_console.error_and_suggest_to_install 'xclip'
 				}
+				;;
+
+			*)
+				_console.error 'Unsupported system.'
 				;;
 		}
 	}
