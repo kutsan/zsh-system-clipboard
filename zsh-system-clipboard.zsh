@@ -56,8 +56,6 @@ function _zsh_system_clipboard_api() {
 	determinate_clipboard_manager
 
 	function sub_set() {
-		local ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT='true'
-
 		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] {
 			# Set also tmux clipboard buffer if tmux available.
 			if (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]) {
@@ -108,7 +106,6 @@ function zsh-system-clipboard-key-Y() {
 
 function zsh-system-clipboard-key-p() {
 	local CLIPBOARD=$(_zsh_system_clipboard_api get)
-	tmux display-message $CLIPBOARD
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
