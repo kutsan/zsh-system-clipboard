@@ -67,7 +67,6 @@ function _zsh_system_clipboard_api() {
 	}
 
 	function sub_get() {
-		set -x
 		local CLIPBOARD_CONTENT=$(eval "${CLIPBOARD[get]}")
 		printf "$CLIPBOARD_CONTENT"
 	}
@@ -77,14 +76,14 @@ function _zsh_system_clipboard_api() {
 	case "$subcommand" {
 		set)
 			shift
-			sub_${subcommand} "$*"
+			sub_${subcommand} "$*" || return false
 
 			return true
 			;;
 
 		get)
 			shift
-			sub_${subcommand}
+			sub_${subcommand} || return false
 
 			return true
 			;;
