@@ -3,7 +3,7 @@
 #
 # @author Kutsan Kaplan <me@kutsankaplan.com>
 # @license GPLv3
-# @version v0.1.0
+# @version v0.2.1
 ##
 
 function _zsh_system_clipboard_api() {
@@ -22,7 +22,7 @@ function _zsh_system_clipboard_api() {
 	function determinate_clipboard_manager() {
 		case "$OSTYPE" {
 			darwin*)
-				if (hash pbcopy 2>/dev/null && hash pbpaste 2>/dev/null) {
+				if ((hash pbcopy && hash pbpaste) 2>/dev/null) {
 					typeset -g CLIPBOARD[set]='pbcopy'
 					typeset -g CLIPBOARD[get]='pbpaste'
 				} else {
@@ -31,7 +31,7 @@ function _zsh_system_clipboard_api() {
 				;;
 
 			linux-android*)
-				if (hash termux-clipboard-set 2>/dev/null && hash termux-clipboard-get 2>/dev/null) {
+				if ((hash termux-clipboard-set && hash termux-clipboard-get) 2>/dev/null) {
 					typeset -g CLIPBOARD[set]='termux-clipboard-set'
 					typeset -g CLIPBOARD[get]='termux-clipboard-get'
 				} else {
@@ -40,7 +40,7 @@ function _zsh_system_clipboard_api() {
 				;;
 
 			linux*)
-				if (hash xsel 2>/dev/null) {
+				if (hash xclip 2>/dev/null) {
 					typeset -g CLIPBOARD[set]='xclip -in'
 					typeset -g CLIPBOARD[get]='xclip -out'
 				} else {
