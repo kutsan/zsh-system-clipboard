@@ -134,10 +134,10 @@ foreach widget (
 }
 
 # Normal mode bindings
-bindkey -M vicmd 'y' zsh-system-clipboard-key-y
 bindkey -M vicmd 'Y' zsh-system-clipboard-key-Y
 bindkey -M vicmd 'p' zsh-system-clipboard-key-p
 bindkey -M vicmd 'P' zsh-system-clipboard-key-P
 
 # Visual mode bindings
+bindkey -M visual 'y' zsh-system-clipboard-key-y
 bindkey -M visual 'x' zsh-system-clipboard-key-x
