@@ -67,8 +67,7 @@ function _zsh_system_clipboard_api() {
 	}
 
 	function sub_get() {
-		local CLIPBOARD_CONTENT=$(eval "${CLIPBOARD[get]}")
-		echo -E "$CLIPBOARD_CONTENT"
+		echo -E $(${CLIPBOARD[get]})
 	}
 
 	local subcommand=${1:-''}
@@ -123,21 +122,16 @@ function zsh-system-clipboard-key-x() {
 }
 
 # Load functions as widgets
-foreach widget (
-	zsh-system-clipboard-key-y
-	zsh-system-clipboard-key-Y
-	zsh-system-clipboard-key-p
-	zsh-system-clipboard-key-P
-	zsh-system-clipboard-key-x
-) {
-	zle -N $widget
+foreach key (y Y p P x) {
+	zle -N zsh-system-clipboard-key-$key
 }
 
 # Normal mode bindings
-bindkey -M vicmd 'Y' zsh-system-clipboard-key-Y
-bindkey -M vicmd 'p' zsh-system-clipboard-key-p
-bindkey -M vicmd 'P' zsh-system-clipboard-key-P
+foreach key (Y p P) {
+	bindkey -M vicmd $key zsh-system-clipboard-key-$key
+}
 
 # Visual mode bindings
-bindkey -M visual 'y' zsh-system-clipboard-key-y
-bindkey -M visual 'x' zsh-system-clipboard-key-x
+foreach key (y x) {
+	bindkey -M visual $key zsh-system-clipboard-key-$key
+}
