@@ -63,12 +63,12 @@ function _zsh_system_clipboard_api() {
 			}
 		}
 
-		printf "$@" | eval "${CLIPBOARD[set]}"
+		echo -E "$@" | eval "${CLIPBOARD[set]}"
 	}
 
 	function sub_get() {
 		local CLIPBOARD_CONTENT=$(eval "${CLIPBOARD[get]}")
-		printf "$CLIPBOARD_CONTENT"
+		echo -E "$CLIPBOARD_CONTENT"
 	}
 
 	local subcommand=${1:-''}
