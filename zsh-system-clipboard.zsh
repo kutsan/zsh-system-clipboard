@@ -3,7 +3,7 @@
 #
 # @author Kutsan Kaplan <me@kutsankaplan.com>
 # @license GPLv3
-# @version v0.2.1
+# @version v0.3.0
 ##
 
 function _zsh_system_clipboard_api() {
