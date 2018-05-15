@@ -67,7 +67,7 @@ function _zsh_system_clipboard_api() {
 	}
 
 	function sub_get() {
-		echo -E $(${CLIPBOARD[get]})
+		echo -E $(eval ${CLIPBOARD[get]})
 	}
 
 	local subcommand=${1:-''}
