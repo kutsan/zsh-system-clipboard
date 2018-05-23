@@ -45,4 +45,4 @@ You need to select some text first **when ZLE's visual mode** to use those keys.
 
 ## License
 
-GPLv3
+GPL-3.0
