@@ -40,7 +40,8 @@ You need to select some text first **when ZLE's visual mode** to use those keys.
 
 ## Options
 
-- `ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT`: Set it to 'true' to enable tmux support. That way, if tmux available, every new clipboard content will be also sent to tmux clipboard buffers. Run `tmux choose-buffer` to view them.
+- `ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT`: Set it to `'true'` to enable tmux support. That way, if tmux available, every new clipboard content will be also sent to tmux clipboard buffers. Run `tmux choose-buffer` to view them.
+- `ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION`: Specify which X selection to use for xclip utility. Either `'PRIMARY'` or `'CLIPBOARD'`. Defaults to `'CLIPBOARD'`.
 
 ## License
 
