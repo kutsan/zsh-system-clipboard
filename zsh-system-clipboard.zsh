@@ -41,8 +41,16 @@ function _zsh_system_clipboard_api() {
 
 			linux*)
 				if (hash xclip 2>/dev/null) {
-					typeset -g CLIPBOARD[set]='xclip -in'
-					typeset -g CLIPBOARD[get]='xclip -out'
+					local clipboard_sel
+					# There are only two options for the selection: 'PRIMARY' /
+					# 'CLIPBOARD'
+					if [[ ${ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION} == 'PRIMARY' ]] {
+						clipboard_sel='PRIMARY'
+					} else {
+						clipboard_sel='CLIPBOARD'
+					}
+					typeset -g CLIPBOARD[set]="xclip -sel ${clipboard_sel} -in"
+					typeset -g CLIPBOARD[get]="xclip -sel ${clipboard_sel} -out"
 				} else {
 					_console.error_and_suggest_to_install 'xclip'
 				}
