@@ -9,17 +9,15 @@
 function _zsh_system_clipboard() {
 	function error() {
 		echo -e "\n\n  \033[41;37m ERROR \033[0m \033[01mzsh-system-clipboard:\033[0m $@\n" >&2
-		return true
 	}
 
 	function suggest_to_install() {
 		error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
-		return true
 	}
 
 	local -A CLIPBOARD
 
-	function determinate_clipboard_manager() {
+	function () {
 		case "$OSTYPE" {
 			darwin*)
 				if ((hash pbcopy && hash pbpaste) 2>/dev/null) {
@@ -74,7 +72,6 @@ function _zsh_system_clipboard() {
 				;;
 		}
 	}
-	determinate_clipboard_manager
 
 	function sub_set() {
 		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] {
@@ -96,14 +93,14 @@ function _zsh_system_clipboard() {
 	case "$subcommand" {
 		set)
 			shift
-			sub_${subcommand} "$*" || return false
+			sub_${subcommand} "$*"
 
 			return true
 			;;
 
 		get)
 			shift
-			sub_${subcommand} || return false
+			sub_${subcommand}
 
 			return true
 			;;
