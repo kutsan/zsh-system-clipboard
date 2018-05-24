@@ -110,20 +110,24 @@ function _zsh_system_clipboard() {
 	}
 }
 
+# Copy selection.
 function zsh-system-clipboard-key-y() {
 	zle vi-yank
 	_zsh_system_clipboard set "$CUTBUFFER"
 }
 
+# Copy whole line.
 function zsh-system-clipboard-key-Y() {
 	zle vi-yank-whole-line
 	_zsh_system_clipboard set "$CUTBUFFER"
 }
 
+# Copy whole line.
 function zsh-system-clipboard-key-yy() {
 	zsh-system-clipboard-key-Y
 }
 
+# Paster after cursor.
 function zsh-system-clipboard-key-p() {
 	local CLIPBOARD=$(_zsh_system_clipboard get)
 
@@ -131,6 +135,7 @@ function zsh-system-clipboard-key-p() {
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
 }
 
+# Paste before cursor.
 function zsh-system-clipboard-key-P() {
 	local CLIPBOARD=$(_zsh_system_clipboard get)
 
@@ -138,6 +143,7 @@ function zsh-system-clipboard-key-P() {
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
 }
 
+# Cut selection.
 function zsh-system-clipboard-key-x() {
 	zle vi-delete
 	_zsh_system_clipboard set "$CUTBUFFER"
