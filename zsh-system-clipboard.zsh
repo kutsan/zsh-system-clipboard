@@ -120,6 +120,10 @@ function zsh-system-clipboard-key-Y() {
 	_zsh_system_clipboard set "$CUTBUFFER"
 }
 
+function zsh-system-clipboard-key-yy() {
+	zsh-system-clipboard-key-Y
+}
+
 function zsh-system-clipboard-key-p() {
 	local CLIPBOARD=$(_zsh_system_clipboard get)
 
@@ -140,12 +144,12 @@ function zsh-system-clipboard-key-x() {
 }
 
 # Load functions as widgets
-foreach key (y Y p P x) {
+foreach key (y yy Y p P x) {
 	zle -N zsh-system-clipboard-key-$key
 }
 
 # Normal mode bindings
-foreach key (Y p P) {
+foreach key (yy Y p P) {
 	bindkey -M vicmd $key zsh-system-clipboard-key-$key
 }
 

@@ -26,6 +26,7 @@ Basically, this plugin overrides some existing key bindings; those are the same 
 #### Normal mode
 
 - <kbd>Y</kbd> Copy whole line to clipboard.
+- <kbd>yy</kbd> Same as <kbd>Y</kbd>.
 - <kbd>p</kbd> Paste after the cursor.
 - <kbd>P</kbd> Paste before the cursor.
 
