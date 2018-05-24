@@ -4,7 +4,7 @@ Zsh plugin that adds key bindings support for ZLE (Zsh Line Editor) clipboard op
 
 ![Demonstration](https://i.imgur.com/LyL0GfQ.gif)
 
-By default, ZLE has its own clipboard buffer. So, using keys like <kbd>y</kbd> when ZLE's normal mode for yanking operations will not send that yanked text to system clipboard. It will live inside ZLE and using <kbd>C-v</kbd> won't paste that text in another program. This plugin synchronize your system clipboard with ZLE buffers while it's not overriding anything. You can still use ZLE's <kbd>"</kbd> register if you want to.
+By default, ZLE has its own clipboard buffer. So, using keys like <kbd>y</kbd> inside ZLE's normal mode for yanking operations will not send that yanked text to system clipboard. It will live inside ZLE and using <kbd>C-v</kbd> won't paste that text in another program. This plugin synchronize your system clipboard with ZLE buffers while it's not overriding anything. You can still use ZLE's <kbd>"</kbd> register if you want to.
 
 It also synchronize [tmux](https://github.com/tmux/tmux) clipboard buffers if tmux available and the `ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT` variable is set to `'true'`. See "Options" section for more details.
 
@@ -17,7 +17,7 @@ bindkey -v
 source /path/to/project/zsh-system-clipboard.zsh
 ```
 
-> Feel free to create a issue if you want to install it via your favorite plugin manager.
+> Feel free to create an issue if you want to install it via your favorite plugin manager.
 
 ## Usage
 
@@ -32,12 +32,12 @@ Basically, this plugin overrides some existing key bindings; those are the same 
 
 #### Visual mode
 
-You need to select some text first **when ZLE's visual mode** to use those keys.
+You need to select some text first with ZLE's visual mode to use those keys. _You may want to set the color to see visual selection better with `typeset -g zle_highlight=(region:bg=yellow)`._
 
 - <kbd>y</kbd> Copy selected text to clipboard.
 - <kbd>x</kbd> Cut and send to clipboard.
 
-> More keys will be added. Feel free to file a issue.
+> More keys will be added. Feel free to file an issue.
 
 ## Options
 
