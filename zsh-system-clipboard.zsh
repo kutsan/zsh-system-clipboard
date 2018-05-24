@@ -6,14 +6,14 @@
 # @version v0.4.0
 ##
 
-function _zsh_system_clipboard_api() {
-	function _console.error() {
+function _zsh_system_clipboard() {
+	function error() {
 		echo -e "\n\n  \033[41;37m ERROR \033[0m \033[01mzsh-system-clipboard:\033[0m $@\n" >&2
 		return true
 	}
 
-	function _console.error_and_suggest_to_install() {
-		_console.error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
+	function suggest_to_install() {
+		error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
 		return true
 	}
 
@@ -26,7 +26,7 @@ function _zsh_system_clipboard_api() {
 					typeset -g CLIPBOARD[set]='pbcopy'
 					typeset -g CLIPBOARD[get]='pbpaste'
 				} else {
-					_console.error_and_suggest_to_install 'pbcopy, pbpaste'
+					suggest_to_install 'pbcopy, pbpaste'
 				}
 				;;
 
@@ -35,7 +35,7 @@ function _zsh_system_clipboard_api() {
 					typeset -g CLIPBOARD[set]='termux-clipboard-set'
 					typeset -g CLIPBOARD[get]='termux-clipboard-get'
 				} else {
-					_console.error_and_suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
+					suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
 				}
 				;;
 
@@ -54,7 +54,7 @@ function _zsh_system_clipboard_api() {
 
 						*)
 							if [[ $ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION != '' ]] {
-								_console.error "$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION is not a valid value for \$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION. Please assign either 'PRIMARY' or 'CLIPBOARD'."
+								error "\033[01m$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION\033[0m is not a valid value for \$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION. Please assign either 'PRIMARY' or 'CLIPBOARD'."
 
 							} else {
 								clipboard_selection='CLIPBOARD'
@@ -65,12 +65,12 @@ function _zsh_system_clipboard_api() {
 					typeset -g CLIPBOARD[set]="xclip -sel $clipboard_selection -in"
 					typeset -g CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
 				} else {
-					_console.error_and_suggest_to_install 'xclip'
+					suggest_to_install 'xclip'
 				}
 				;;
 
 			*)
-				_console.error 'Unsupported system.'
+				error 'Unsupported system.'
 				;;
 		}
 	}
@@ -115,23 +115,23 @@ function _zsh_system_clipboard_api() {
 
 function zsh-system-clipboard-key-y() {
 	zle vi-yank
-	_zsh_system_clipboard_api set "$CUTBUFFER"
+	_zsh_system_clipboard set "$CUTBUFFER"
 }
 
 function zsh-system-clipboard-key-Y() {
 	zle vi-yank-whole-line
-	_zsh_system_clipboard_api set "$CUTBUFFER"
+	_zsh_system_clipboard set "$CUTBUFFER"
 }
 
 function zsh-system-clipboard-key-p() {
-	local CLIPBOARD=$(_zsh_system_clipboard_api get)
+	local CLIPBOARD=$(_zsh_system_clipboard get)
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
 }
 
 function zsh-system-clipboard-key-P() {
-	local CLIPBOARD=$(_zsh_system_clipboard_api get)
+	local CLIPBOARD=$(_zsh_system_clipboard get)
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
@@ -139,7 +139,7 @@ function zsh-system-clipboard-key-P() {
 
 function zsh-system-clipboard-key-x() {
 	zle vi-delete
-	_zsh_system_clipboard_api set "$CUTBUFFER"
+	_zsh_system_clipboard set "$CUTBUFFER"
 }
 
 # Load functions as widgets
