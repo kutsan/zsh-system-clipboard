@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 ##
 # zsh-system-clipboard
 #
