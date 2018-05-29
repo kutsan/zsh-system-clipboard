@@ -151,17 +151,22 @@ function zsh-system-clipboard-key-x() {
 	_zsh_system_clipboard set "$CUTBUFFER"
 }
 
-# Load functions as widgets
-foreach key (y yy Y p P x) {
-	zle -N zsh-system-clipboard-key-$key
-}
+# Bind keys to widgets.
+function () {
+	local key
 
-# Normal mode bindings
-foreach key (yy Y p P) {
-	bindkey -M vicmd $key zsh-system-clipboard-key-$key
-}
+	# Load functions as widgets
+	foreach key (y yy Y p P x) {
+		zle -N zsh-system-clipboard-key-$key
+	}
 
-# Visual mode bindings
-foreach key (y x) {
-	bindkey -M visual $key zsh-system-clipboard-key-$key
+	# Normal mode bindings
+	foreach key (yy Y p P) {
+		bindkey -M vicmd $key zsh-system-clipboard-key-$key
+	}
+
+	# Visual mode bindings
+	foreach key (y x) {
+		bindkey -M visual $key zsh-system-clipboard-key-$key
+	}
 }
