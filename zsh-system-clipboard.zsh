@@ -8,6 +8,9 @@
 # @version v0.5.0
 ##
 
+# Enable vi emulation mode explicitly.
+setopt VI
+
 function _zsh_system_clipboard() {
 	function error() {
 		echo -e "\n\n  \033[41;37m ERROR \033[0m \033[01mzsh-system-clipboard:\033[0m $@\n" >&2
