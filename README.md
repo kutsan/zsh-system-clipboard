@@ -29,7 +29,7 @@ git clone https://github.com/kutsan/zsh-system-clipboard ~/.zsh/plugins/zsh-syst
 and source the `zsh-system-clipboard.zsh` file in your `.zshrc`.
 
 ```sh
-source "$HOME/.zsh/plugins/zsh-system-clipboard.zsh"
+source "$HOME/.zsh/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh"
 ```
 
 ## Usage
