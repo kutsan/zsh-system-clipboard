@@ -42,7 +42,7 @@ function _zsh_system_clipboard() {
 				}
 				;;
 
-			linux*)
+			linux*|freebsd*)
 				if (hash xclip 2>/dev/null) {
 					local clipboard_selection
 
@@ -67,6 +67,7 @@ function _zsh_system_clipboard() {
 
 					typeset -g CLIPBOARD[set]="xclip -sel $clipboard_selection -in"
 					typeset -g CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
+
 				} else {
 					suggest_to_install 'xclip'
 				}
