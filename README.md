@@ -39,7 +39,7 @@ Keys are the same as in Vim (only following keys are implemented). It will be in
 #### Normal mode
 
 - <kbd>Y</kbd> Copy whole line to clipboard.
-- <kbd>yy</kbd> Same as <kbd>Y</kbd>.
+- <kbd>yy</kbd> Same as <kbd>Y</kbd>. _(Tweak `KEYTIMEOUT`, if doesn't work.)_
 - <kbd>p</kbd> Paste after the cursor.
 - <kbd>P</kbd> Paste before the cursor.
 
