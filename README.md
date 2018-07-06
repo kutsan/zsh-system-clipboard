@@ -64,6 +64,24 @@ typeset -g ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT='true'
 typeset -g ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION='PRIMARY'
 ```
 
+## API
+
+The plugin itself provides a separate cross-platform clipboard API for internal widgets. You can use this API as a standalone function.
+
+To set system clipboard buffer:
+
+```sh
+_zsh_system_clipboard set "example text"
+```
+
+To get system clipboard buffer to `stdout`:
+
+```sh
+_zsh_system_clipboard get
+```
+
+It will show pretty-printed errors via `stderr` or `stdout` if something went wrong.
+
 ## License
 
 GPL-3.0
