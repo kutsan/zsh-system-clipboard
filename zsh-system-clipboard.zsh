@@ -4,7 +4,7 @@
 # zsh-system-clipboard
 #
 # @author Kutsan Kaplan <me@kutsankaplan.com>
-# @license GPLv3
+# @license GPL-3.0
 # @version v0.5.0
 ##
 
