@@ -156,8 +156,7 @@ function zsh-system-clipboard-key-x() {
 
 # Cut selection.
 function zsh-system-clipboard-key-d() {
-	zle vi-delete
-	_zsh_system_clipboard set "$CUTBUFFER"
+	zsh-system-clipboard-key-x
 }
 
 # Bind keys to widgets.
