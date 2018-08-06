@@ -154,22 +154,27 @@ function zsh-system-clipboard-key-x() {
 	_zsh_system_clipboard set "$CUTBUFFER"
 }
 
+# Cut selection.
+function zsh-system-clipboard-key-d() {
+	zsh-system-clipboard-key-x
+}
+
 # Bind keys to widgets.
 function () {
 	local key
 
 	# Load functions as widgets
-	foreach key (y yy Y p P x) {
+	foreach key (y yy Y p P x d) {
 		zle -N zsh-system-clipboard-key-$key
 	}
 
 	# Normal mode bindings
-	foreach key (yy Y p P) {
+	foreach key (yy Y p P d) {
 		bindkey -M vicmd $key zsh-system-clipboard-key-$key
 	}
 
 	# Visual mode bindings
-	foreach key (y x) {
+	foreach key (y x d) {
 		bindkey -M visual $key zsh-system-clipboard-key-$key
 	}
 }
