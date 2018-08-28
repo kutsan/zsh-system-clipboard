@@ -8,127 +8,95 @@
 # @version v0.6.0
 ##
 
-function _zsh_system_clipboard() {
-	function error() {
-		echo -e "\n\n  \033[41;37m ERROR \033[0m \033[01mzsh-system-clipboard:\033[0m $@\n" >&2
-	}
+function error() {
+	echo -e "\n\n  \033[41;37m ERROR \033[0m \033[01mzsh-system-clipboard:\033[0m $@\n" >&2
+}
 
-	function suggest_to_install() {
-		error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
-	}
+function suggest_to_install() {
+	error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
+}
 
-	local -A CLIPBOARD
-
-	function () {
-		case "$OSTYPE" {
-			darwin*)
-				if ((hash pbcopy && hash pbpaste) 2>/dev/null) {
-					typeset -g CLIPBOARD[set]='pbcopy'
-					typeset -g CLIPBOARD[get]='pbpaste'
-				} else {
-					suggest_to_install 'pbcopy, pbpaste'
-				}
-				;;
-
-			linux-android*)
-				if ((hash termux-clipboard-set && hash termux-clipboard-get) 2>/dev/null) {
-					typeset -g CLIPBOARD[set]='termux-clipboard-set'
-					typeset -g CLIPBOARD[get]='termux-clipboard-get'
-				} else {
-					suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
-				}
-				;;
-
-			linux*|freebsd*)
-				if (hash xclip 2>/dev/null) {
-					local clipboard_selection
-
-					case $ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION {
-						PRIMARY)
-							clipboard_selection='PRIMARY'
-							;;
-
-						CLIPBOARD)
-							clipboard_selection='CLIPBOARD'
-							;;
-
-						*)
-							if [[ $ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION != '' ]] {
-								error "\033[01m$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION\033[0m is not a valid value for \$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION. Please assign either 'PRIMARY' or 'CLIPBOARD'."
-
-							} else {
-								clipboard_selection='CLIPBOARD'
-							}
-							;;
+declare -A ZSH_SYSTEM_CLIPBOARD
+case "$OSTYPE" {
+	darwin*)
+		if ((hash pbcopy && hash pbpaste) 2>/dev/null) {
+			typeset -g ZSH_SYSTEM_CLIPBOARD[set]='pbcopy'
+			typeset -g ZSH_SYSTEM_CLIPBOARD[get]='pbpaste'
+		} else {
+			suggest_to_install 'pbcopy, pbpaste'
+		}
+		;;
+	linux-android*)
+		if ((hash termux-clipboard-set && hash termux-clipboard-get) 2>/dev/null) {
+			typeset -g ZSH_SYSTEM_CLIPBOARD[set]='termux-clipboard-set'
+			typeset -g ZSH_SYSTEM_CLIPBOARD[get]='termux-clipboard-get'
+		} else {
+			suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
+		}
+		;;
+	linux*|freebsd*)
+		if (hash xclip 2>/dev/null) {
+			local clipboard_selection
+			case $ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION {
+				PRIMARY)
+					clipboard_selection='PRIMARY'
+					;;
+				CLIPBOARD)
+					clipboard_selection='CLIPBOARD'
+					;;
+				*)
+					if [[ $ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION != '' ]] {
+						error "\033[01m$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION\033[0m is not a valid value for \$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION. Please assign either 'PRIMARY' or 'CLIPBOARD'."
+					} else {
+						clipboard_selection='CLIPBOARD'
 					}
-
-					typeset -g CLIPBOARD[set]="xclip -sel $clipboard_selection -in"
-					typeset -g CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
-				} else {
-					suggest_to_install 'xclip'
-				}
-				;;
-
-			*)
-				error 'Unsupported system.'
-				;;
-		}
-	}
-
-	function sub_set() {
-		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] {
-			# Set also tmux clipboard buffer if tmux available.
-			if (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]) {
-				tmux set-buffer -- "$@"
+					;;
 			}
+			typeset -g ZSH_SYSTEM_CLIPBOARD[set]="xclip -sel $clipboard_selection -in"
+			typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
+		} else {
+			suggest_to_install 'xclip'
 		}
+		;;
+	*)
+		error 'Unsupported system.'
+		;;
+}
+unfunction error
+unfunction suggest_to_install
 
-		echo -E "$@" | eval "${CLIPBOARD[set]}"
+function _zsh_system_clipboard_set() {
+	if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] {
+		# Set also tmux clipboard buffer if tmux available.
+		if (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]) {
+			tmux set-buffer -- "$*"
+		}
 	}
-
-	function sub_get() {
-		echo -E $(eval ${CLIPBOARD[get]})
-	}
-
-	local subcommand=${1:-''}
-
-	case "$subcommand" {
-		set)
-			shift
-			sub_${subcommand} "$*"
-
-			return true
-			;;
-
-		get)
-			shift
-			sub_${subcommand}
-
-			return true
-			;;
-
-		*)
-			return false
-	}
+	echo -E "$*" | eval "${ZSH_SYSTEM_CLIPBOARD[set]}"
+	return true
+}
+function _zsh_system_clipboard_get() {
+	eval "${ZSH_SYSTEM_CLIPBOARD[get]}"
+	return true
 }
 
 # Copy selection.
 function zsh-system-clipboard-yank() {
 	zle vi-yank
-	_zsh_system_clipboard set "$CUTBUFFER"
+	_zsh_system_clipboard_set "$CUTBUFFER"
 }
 zle -N zsh-system-clipboard-yank
 
 # Copy whole line.
 function zsh-system-clipboard-yank-whole-line() {
 	zle vi-yank-whole-line
-	_zsh_system_clipboard set "$CUTBUFFER"
+	_zsh_system_clipboard_set "$CUTBUFFER"
 }
 zle -N zsh-system-clipboard-yank-whole-line
 
 # Paste after cursor.
 function zsh-system-clipboard-put-after() {
-	local CLIPBOARD=$(_zsh_system_clipboard get)
+	local CLIPBOARD=$(_zsh_system_clipboard_get)
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
@@ -137,7 +105,7 @@ zle -N zsh-system-clipboard-put-after
 
 # Paste before cursor.
 function zsh-system-clipboard-put-before() {
-	local CLIPBOARD=$(_zsh_system_clipboard get)
+	local CLIPBOARD=$(_zsh_system_clipboard_get)
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
@@ -147,7 +115,7 @@ zle -N zsh-system-clipboard-put-before
 # Cut selection.
 function zsh-system-clipboard-cut() {
 	zle vi-delete
-	_zsh_system_clipboard set "$CUTBUFFER"
+	_zsh_system_clipboard_set "$CUTBUFFER"
 }
 zle -N zsh-system-clipboard-cut
 
