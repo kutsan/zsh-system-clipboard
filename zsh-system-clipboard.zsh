@@ -8,9 +8,6 @@
 # @version v0.6.0
 ##
 
-# Enable vi emulation mode explicitly.
-setopt VI
-
 function _zsh_system_clipboard() {
 	function error() {
 		echo -e "\n\n  \033[41;37m ERROR \033[0m \033[01mzsh-system-clipboard:\033[0m $@\n" >&2
@@ -115,66 +112,100 @@ function _zsh_system_clipboard() {
 	}
 }
 
-# Copy selection.
-function zsh-system-clipboard-key-y() {
+function zsh-system-clipboard-vicmd-vi-yank() {
 	zle vi-yank
 	_zsh_system_clipboard set "$CUTBUFFER"
 }
+zle -N zsh-system-clipboard-vicmd-vi-yank
 
-# Copy whole line.
-function zsh-system-clipboard-key-Y() {
+function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 	zle vi-yank-whole-line
 	_zsh_system_clipboard set "$CUTBUFFER"
 }
+zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 
-# Copy whole line.
-function zsh-system-clipboard-key-yy() {
-	zsh-system-clipboard-key-Y
-}
-
-# Paster after cursor.
-function zsh-system-clipboard-key-p() {
+function zsh-system-clipboard-vicmd-vi-put-after() {
 	local CLIPBOARD=$(_zsh_system_clipboard get)
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
 }
+zle -N zsh-system-clipboard-vicmd-vi-put-after
 
-# Paste before cursor.
-function zsh-system-clipboard-key-P() {
+function zsh-system-clipboard-vicmd-vi-put-before() {
 	local CLIPBOARD=$(_zsh_system_clipboard get)
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
 }
+zle -N zsh-system-clipboard-vicmd-vi-put-before
 
-# Cut selection.
-function zsh-system-clipboard-key-x() {
+function zsh-system-clipboard-vicmd-vi-delete() {
 	zle vi-delete
 	_zsh_system_clipboard set "$CUTBUFFER"
 }
+zle -N zsh-system-clipboard-vicmd-vi-delete
 
-# Cut selection.
-function zsh-system-clipboard-key-d() {
-	zsh-system-clipboard-key-x
+function zsh-system-clipboard-vicmd-vi-delete-char() {
+	zle vi-delete-char
+	_zsh_system_clipboard set "$CUTBUFFER"
 }
+zle -N zsh-system-clipboard-vicmd-vi-delete-char
+
+function zsh-system-clipboard-vicmd-vi-change-eol() {
+	zle vi-change-eol
+	_zsh_system_clipboard set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-change-eol
+
+function zsh-system-clipboard-vicmd-vi-kill-eol() {
+	zle vi-kill-eol
+	_zsh_system_clipboard set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-kill-eol
+
+function zsh-system-clipboard-vicmd-vi-change-whole-line() {
+	zle vi-change-whole-line
+	_zsh_system_clipboard set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-change-whole-line
+
+function zsh-system-clipboard-vicmd-vi-change() {
+	zle vi-change
+	_zsh_system_clipboard set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-change
+
+function zsh-system-clipboard-vicmd-vi-substitue() {
+	zle vi-substitue
+	_zsh_system_clipboard set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-substitue
+
+function zsh-system-clipboard-vicmd-vi-delete-char() {
+	zle vi-delete-char
+	_zsh_system_clipboard set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-delete-char
+
+function zsh-system-clipboard-vicmd-vi-backward-delete-char() {
+	zle vi-backward-delete-char
+	_zsh_system_clipboard set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-backward-delete-char
 
 # Bind keys to widgets.
 function () {
-	local key
-
-	# Load functions as widgets
-	foreach key (y yy Y p P x d) {
-		zle -N zsh-system-clipboard-key-$key
-	}
-
-	# Normal mode bindings
-	foreach key (yy Y p P d) {
-		bindkey -M vicmd $key zsh-system-clipboard-key-$key
-	}
-
-	# Visual mode bindings
-	foreach key (y x d) {
-		bindkey -M visual $key zsh-system-clipboard-key-$key
-	}
+	local binded_keys i parts key cmd keymap
+	for keymap in vicmd visual emacs; do
+		binded_keys=(${(f)"$(bindkey -M $keymap)"})
+		for (( i = 1; i < ${#binded_keys[@]}; ++i )); do
+			parts=("${(z)binded_keys[$i]}")
+			key="${parts[1]}"
+			cmd="${parts[2]}"
+			if (( $+functions[zsh-system-clipboard-$keymap-$cmd] )); then
+				eval bindkey -M $keymap $key zsh-system-clipboard-$keymap-$cmd
+			fi
+		done
+	done
 }
