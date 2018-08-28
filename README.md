@@ -82,6 +82,10 @@ _zsh_system_clipboard get
 
 It will show pretty-printed errors via `stderr` or `stdout` if something went wrong.
 
+## Thanks
+
+Special thanks to _Doron Behar ([@doronbehar](https://github.com/doronbehar))_ for their interests, suggestions, time and pull requests.
+
 ## License
 
 GPL-3.0
