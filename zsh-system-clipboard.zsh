@@ -80,85 +80,100 @@ function _zsh_system_clipboard_get() {
 	return true
 }
 
-# Copy selection.
-function zsh-system-clipboard-yank() {
+function zsh-system-clipboard-vicmd-vi-yank() {
 	zle vi-yank
 	_zsh_system_clipboard_set "$CUTBUFFER"
 }
-zle -N zsh-system-clipboard-yank
+zle -N zsh-system-clipboard-vicmd-vi-yank
 
-# Copy whole line.
-function zsh-system-clipboard-yank-whole-line() {
+function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 	zle vi-yank-whole-line
 	_zsh_system_clipboard_set "$CUTBUFFER"
 }
-zle -N zsh-system-clipboard-yank-whole-line
+zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 
-# Paste after cursor.
-function zsh-system-clipboard-put-after() {
+function zsh-system-clipboard-vicmd-vi-put-after() {
 	local CLIPBOARD=$(_zsh_system_clipboard_get)
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
 }
-zle -N zsh-system-clipboard-put-after
+zle -N zsh-system-clipboard-vicmd-vi-put-after
 
-# Paste before cursor.
-function zsh-system-clipboard-put-before() {
+function zsh-system-clipboard-vicmd-vi-put-before() {
 	local CLIPBOARD=$(_zsh_system_clipboard_get)
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
 }
-zle -N zsh-system-clipboard-put-before
+zle -N zsh-system-clipboard-vicmd-vi-put-before
 
-# Cut selection.
-function zsh-system-clipboard-cut() {
+function zsh-system-clipboard-vicmd-vi-delete() {
 	zle vi-delete
 	_zsh_system_clipboard_set "$CUTBUFFER"
 }
-zle -N zsh-system-clipboard-cut
+zle -N zsh-system-clipboard-vicmd-vi-delete
+
+function zsh-system-clipboard-vicmd-vi-delete-char() {
+	zle vi-delete-char
+	_zsh_system_clipboard_set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-delete-char
+
+function zsh-system-clipboard-vicmd-vi-change-eol() {
+	zle vi-change-eol
+	_zsh_system_clipboard_set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-change-eol
+
+function zsh-system-clipboard-vicmd-vi-kill-eol() {
+	zle vi-kill-eol
+	_zsh_system_clipboard_set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-kill-eol
+
+function zsh-system-clipboard-vicmd-vi-change-whole-line() {
+	zle vi-change-whole-line
+	_zsh_system_clipboard_set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-change-whole-line
+
+function zsh-system-clipboard-vicmd-vi-change() {
+	zle vi-change
+	_zsh_system_clipboard_set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-change
+
+function zsh-system-clipboard-vicmd-vi-substitue() {
+	zle vi-substitue
+	_zsh_system_clipboard_set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-substitue
+
+function zsh-system-clipboard-vicmd-vi-delete-char() {
+	zle vi-delete-char
+	_zsh_system_clipboard_set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-delete-char
+
+function zsh-system-clipboard-vicmd-vi-backward-delete-char() {
+	zle vi-backward-delete-char
+	_zsh_system_clipboard_set "$CUTBUFFER"
+}
+zle -N zsh-system-clipboard-vicmd-vi-backward-delete-char
 
 # Bind keys to widgets.
 function () {
-	local binded_keys i parts key cmd
-	#
-	binded_keys=(${(f)"$(bindkey -M vicmd)"})
-	for (( i = 1; i < ${#binded_keys[@]}; ++i )); do
-		parts=("${(z)binded_keys[$i]}")
-		key="${parts[1]}"
-		cmd="${parts[2]}"
-		case $cmd in
-			"vi-yank")
-				eval bindkey -M vicmd $key zsh-system-clipboard-yank
-				;;
-			"vi-yank-whole-line")
-				eval bindkey -M vicmd $key zsh-system-clipboard-yank-whole-line
-				;;
-			"vi-put-before")
-				eval bindkey -M vicmd $key zsh-system-clipboard-put-before
-				;;
-			"vi-put-after")
-				eval bindkey -M vicmd $key zsh-system-clipboard-put-after
-				;;
-			"vi-change-eol"|"vi-kill-eol"|"vi-change-whole-line"|"vi-change"|"vi-substitue"|"vi-delete"|"vi-delete-char"|"vi-backward-delete-char")
-				eval bindkey -M vicmd $key zsh-system-clipboard-cut
-				;;
-		esac
+	local binded_keys i parts key cmd keymap
+	for keymap in vicmd visual emacs; do
+		binded_keys=(${(f)"$(bindkey -M $keymap)"})
+		for (( i = 1; i < ${#binded_keys[@]}; ++i )); do
+			parts=("${(z)binded_keys[$i]}")
+			key="${parts[1]}"
+			cmd="${parts[2]}"
+			if (( $+functions[zsh-system-clipboard-$keymap-$cmd] )); then
+				eval bindkey -M $keymap $key zsh-system-clipboard-$keymap-$cmd
+			fi
+		done
 	done
-	binded_keys=(${(f)"$(bindkey -M visual)"})
-	for (( i = 1; i < ${#binded_keys[@]}; ++i )); do
-		parts=("${(z)binded_keys[$i]}")
-		key="${parts[1]}"
-		cmd="${parts[2]}"
-		case $cmd in
-			"put-replace-selection")
-				eval bindkey -M visual $key zsh-system-clipboard-yank
-				;;
-			"vi-delete")
-				eval bindkey -M visual $key zsh-system-clipboard-cut
-				;;
-		esac
-	done
-	# TODO: Run the same kind of commands for `bindkey -M emacs`
 }
