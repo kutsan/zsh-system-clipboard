@@ -8,11 +8,11 @@
 # @version v0.6.0
 ##
 
-function error() {
+function _zsh_system_clipboard_error() {
 	echo -e "\n\n  \033[41;37m ERROR \033[0m \033[01mzsh-system-clipboard:\033[0m $@\n" >&2
 }
 
-function suggest_to_install() {
+function _zsh_system_clipboard_suggest_to_install() {
 	error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
 }
 
@@ -62,8 +62,8 @@ case "$OSTYPE" {
 		error 'Unsupported system.'
 		;;
 }
-unfunction error
-unfunction suggest_to_install
+unfunction _zsh_system_clipboard_error
+unfunction _zsh_system_clipboard_suggest_to_install
 
 function _zsh_system_clipboard_set() {
 	if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] {
