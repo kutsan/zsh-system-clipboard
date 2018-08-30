@@ -3,7 +3,9 @@
 ##
 # zsh-system-clipboard
 #
-# @author Kutsan Kaplan <me@kutsankaplan.com>
+# @author
+#	Kutsan Kaplan <me@kutsankaplan.com>
+#	Doron Behar <doron.behar@gmail.com>
 # @license GPL-3.0
 # @version v0.6.0
 ##
