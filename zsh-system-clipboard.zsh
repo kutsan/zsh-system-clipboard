@@ -16,7 +16,7 @@ function _zsh_system_clipboard_suggest_to_install() {
 	error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
 }
 
-declare -A ZSH_SYSTEM_CLIPBOARD
+typeset -A ZSH_SYSTEM_CLIPBOARD
 case "$OSTYPE" {
 	darwin*)
 		if ((hash pbcopy && hash pbpaste) 2>/dev/null) {
