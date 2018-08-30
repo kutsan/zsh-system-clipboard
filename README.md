@@ -26,7 +26,7 @@ Clone this repository somewhere,
 git clone https://github.com/kutsan/zsh-system-clipboard ~/.zsh/plugins/zsh-system-clipboard
 ```
 
-and source the `zsh-system-clipboard.zsh` file in your `.zshrc`.
+Source the [`zsh-system-clipboard.zsh`](https://github.com/kutsan/zsh-system-clipboard/blob/master/zsh-system-clipboard.zsh) file in your `~/.zshrc`.
 
 ```sh
 source "$HOME/.zsh/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh"
