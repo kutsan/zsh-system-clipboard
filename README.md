@@ -32,25 +32,9 @@ Source the [`zsh-system-clipboard.zsh`](https://github.com/kutsan/zsh-system-cli
 source "$HOME/.zsh/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh"
 ```
 
-## Usage
+The script `zsh-system-clipboard.zsh` parses the output of `bindkey -M vicmd`, `bindkey -M emacs`, `bindkey -M visual` in order to rebind your keys (along with the default ones) the [`ZLE widgets`](http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets) functions that copy from and paste to the system clipboard. This means that you should put all of your bindings before sourcing `zsh-system-clipboard.zsh` in your `~/.zshrc`.
 
-Keys are the same as in Vim (only following keys are implemented). It will be intuitive to use if you already using Vim.
-
-#### Normal mode
-
-- <kbd>Y</kbd> Copy whole line to clipboard.
-- <kbd>yy</kbd> Same as <kbd>Y</kbd>. _(Tweak `KEYTIMEOUT`, if doesn't work.)_
-- <kbd>p</kbd> Paste after the cursor.
-- <kbd>P</kbd> Paste before the cursor.
-
-#### Visual mode
-
-Select some text first with ZLE's visual mode to use those keys.
-
-- <kbd>y</kbd> Copy selected text to clipboard.
-- <kbd>x</kbd> Cut and send to clipboard.
-
-> You may want to set the color to see visual selection better with `typeset -g zle_highlight=(region:bg=yellow)`.
+**Note: widget functions that replace builtin functions for the `emacs` keymap are not yet written (see #12).**
 
 ## Options
 
