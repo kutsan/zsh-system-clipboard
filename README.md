@@ -71,13 +71,13 @@ The plugin itself provides a separate cross-platform clipboard API for internal 
 To set system clipboard buffer:
 
 ```sh
-_zsh_system_clipboard set "example text"
+_zsh_system_clipboard_set "example text"
 ```
 
 To get system clipboard buffer to `stdout`:
 
 ```sh
-_zsh_system_clipboard get
+_zsh_system_clipboard_get
 ```
 
 It will show pretty-printed errors via `stderr` or `stdout` if something went wrong.
