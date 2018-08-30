@@ -7,7 +7,7 @@
 #	Kutsan Kaplan <me@kutsankaplan.com>
 #	Doron Behar <doron.behar@gmail.com>
 # @license GPL-3.0
-# @version v0.6.0
+# @version v0.7.0
 ##
 
 function _zsh_system_clipboard_error() {
