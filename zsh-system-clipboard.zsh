@@ -54,8 +54,10 @@ case "$OSTYPE" {
 					}
 					;;
 			}
-			typeset -g ZSH_SYSTEM_CLIPBOARD[set]="xclip -sel $clipboard_selection -in"
-			typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
+			if [[ ! -z $DISPLAY ]]; then
+				typeset -g ZSH_SYSTEM_CLIPBOARD[set]="xclip -sel $clipboard_selection -in"
+				typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
+			fi
 		} else {
 			suggest_to_install 'xclip'
 		}
