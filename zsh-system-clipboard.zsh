@@ -76,7 +76,7 @@ function _zsh_system_clipboard_set() {
 			tmux set-buffer -- "$*"
 		}
 	}
-	echo -E "$*" | eval "${ZSH_SYSTEM_CLIPBOARD[set]}"
+	printf '%s' "$1" | eval "${ZSH_SYSTEM_CLIPBOARD[set]}"
 	return true
 }
 function _zsh_system_clipboard_get() {
@@ -97,7 +97,7 @@ function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 
 function zsh-system-clipboard-vicmd-vi-put-after() {
-	local CLIPBOARD=$(_zsh_system_clipboard_get)
+	_zsh_system_clipboard_get | read -d '' -r CLIPBOARD
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
@@ -105,7 +105,7 @@ function zsh-system-clipboard-vicmd-vi-put-after() {
 zle -N zsh-system-clipboard-vicmd-vi-put-after
 
 function zsh-system-clipboard-vicmd-vi-put-before() {
-	local CLIPBOARD=$(_zsh_system_clipboard_get)
+	_zsh_system_clipboard_get | read -d '' -r CLIPBOARD
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
