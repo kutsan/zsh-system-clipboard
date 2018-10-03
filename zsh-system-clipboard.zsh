@@ -76,7 +76,7 @@ function _zsh_system_clipboard_set() {
 			tmux set-buffer -- "$*"
 		}
 	}
-	printf '%s' "$1" | eval "${ZSH_SYSTEM_CLIPBOARD[set]}"
+	eval "${ZSH_SYSTEM_CLIPBOARD[set]}" <<< "$1"
 	return true
 }
 function _zsh_system_clipboard_get() {
