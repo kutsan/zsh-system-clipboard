@@ -25,7 +25,7 @@ case "$OSTYPE" {
 			typeset -g ZSH_SYSTEM_CLIPBOARD[set]='pbcopy'
 			typeset -g ZSH_SYSTEM_CLIPBOARD[get]='pbpaste'
 		} else {
-			suggest_to_install 'pbcopy, pbpaste'
+			_zsh_syste_clipboard_suggest_to_install 'pbcopy, pbpaste'
 		}
 		;;
 	linux-android*)
@@ -33,7 +33,7 @@ case "$OSTYPE" {
 			typeset -g ZSH_SYSTEM_CLIPBOARD[set]='termux-clipboard-set'
 			typeset -g ZSH_SYSTEM_CLIPBOARD[get]='termux-clipboard-get'
 		} else {
-			suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
+			_zsh_syste_clipboard_suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
 		}
 		;;
 	linux*|freebsd*)
@@ -59,7 +59,7 @@ case "$OSTYPE" {
 				typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
 			fi
 		} else {
-			suggest_to_install 'xclip'
+			_zsh_syste_clipboard_suggest_to_install 'xclip'
 		}
 		;;
 	*)
