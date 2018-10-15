@@ -48,7 +48,7 @@ case "$OSTYPE" {
 					;;
 				*)
 					if [[ $ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION != '' ]] {
-						error "\033[01m$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION\033[0m is not a valid value for \$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION. Please assign either 'PRIMARY' or 'CLIPBOARD'."
+						_zsh_system_clipboard_error "\033[01m$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION\033[0m is not a valid value for \$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION. Please assign either 'PRIMARY' or 'CLIPBOARD'."
 					} else {
 						clipboard_selection='CLIPBOARD'
 					}
@@ -63,7 +63,7 @@ case "$OSTYPE" {
 		}
 		;;
 	*)
-		error 'Unsupported system.'
+		_zsh_system_clipboard_error 'Unsupported system.'
 		;;
 }
 unfunction _zsh_system_clipboard_error
