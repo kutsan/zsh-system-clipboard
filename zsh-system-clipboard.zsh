@@ -15,7 +15,7 @@ function _zsh_system_clipboard_error() {
 }
 
 function _zsh_system_clipboard_suggest_to_install() {
-	error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
+	_zsh_system_clipboard_error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
 }
 
 typeset -A ZSH_SYSTEM_CLIPBOARD
