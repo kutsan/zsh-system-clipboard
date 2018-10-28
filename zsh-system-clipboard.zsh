@@ -15,7 +15,7 @@ function _zsh_system_clipboard_error() {
 }
 
 function _zsh_system_clipboard_suggest_to_install() {
-	error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
+	_zsh_system_clipboard_error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
 }
 
 typeset -A ZSH_SYSTEM_CLIPBOARD
@@ -25,7 +25,7 @@ case "$OSTYPE" {
 			typeset -g ZSH_SYSTEM_CLIPBOARD[set]='pbcopy'
 			typeset -g ZSH_SYSTEM_CLIPBOARD[get]='pbpaste'
 		} else {
-			suggest_to_install 'pbcopy, pbpaste'
+			_zsh_system_clipboard_suggest_to_install 'pbcopy, pbpaste'
 		}
 		;;
 	linux-android*)
@@ -33,7 +33,7 @@ case "$OSTYPE" {
 			typeset -g ZSH_SYSTEM_CLIPBOARD[set]='termux-clipboard-set'
 			typeset -g ZSH_SYSTEM_CLIPBOARD[get]='termux-clipboard-get'
 		} else {
-			suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
+			_zsh_system_clipboard_suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
 		}
 		;;
 	linux*|freebsd*)
@@ -48,7 +48,7 @@ case "$OSTYPE" {
 					;;
 				*)
 					if [[ $ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION != '' ]] {
-						error "\033[01m$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION\033[0m is not a valid value for \$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION. Please assign either 'PRIMARY' or 'CLIPBOARD'."
+						_zsh_system_clipboard_error "\033[01m$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION\033[0m is not a valid value for \$ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION. Please assign either 'PRIMARY' or 'CLIPBOARD'."
 					} else {
 						clipboard_selection='CLIPBOARD'
 					}
@@ -59,11 +59,11 @@ case "$OSTYPE" {
 				typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
 			fi
 		} else {
-			suggest_to_install 'xclip'
+			_zsh_system_clipboard_suggest_to_install 'xclip'
 		}
 		;;
 	*)
-		error 'Unsupported system.'
+		_zsh_system_clipboard_error 'Unsupported system.'
 		;;
 }
 unfunction _zsh_system_clipboard_error
