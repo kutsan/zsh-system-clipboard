@@ -39,13 +39,13 @@ The script `zsh-system-clipboard.zsh` parses the output of `bindkey -M vicmd`, `
 ## Options
 
 - `ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT`: Set it to `'true'` to enable tmux support. That way, if tmux available, every new clipboard content will be also sent to tmux clipboard buffers. Run `tmux choose-buffer` to view them.
-- `ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION`: Specify which X selection to use for `xclip` utility. Either `'PRIMARY'` or `'CLIPBOARD'`. Defaults to `'CLIPBOARD'`.
+- `ZSH_SYSTEM_CLIPBOARD_SELECTION`: Specify which X selection to use for `xclip` or `xsel` utilities. Either `'PRIMARY'` or `'CLIPBOARD'`. Defaults to `'CLIPBOARD'`.
 
 For example:
 
 ```sh
 typeset -g ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT='true'
-typeset -g ZSH_SYSTEM_CLIPBOARD_XCLIP_SELECTION='PRIMARY'
+typeset -g ZSH_SYSTEM_CLIPBOARD_SELECTION='PRIMARY'
 ```
 
 ## API
