@@ -97,20 +97,7 @@ function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 
 function zsh-system-clipboard-vicmd-vi-put-after() {
-	local CLIPBOARD="$(_zsh_system_clipboard_get; printf '%s' x)"
-	CLIPBOARD="${CLIPBOARD%x}"
-	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
-		local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
-		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" ]]; then
-			# we don't have any more newlines so in RBUFFER
-			CLIPBOARD=$'\n'"${CLIPBOARD%%$'\n'*}"
-			CURSOR="${#BUFFER}"
-		else
-			CLIPBOARD="${CLIPBOARD%%$'\n'*}"$'\n'
-			local RBUFFER_LINE_END_INDEX="${#RBUFFER_UNTIL_LINE_END}"
-			CURSOR="$(( ${CURSOR} + ${RBUFFER_LINE_END_INDEX} ))"
-		fi
-	fi
+	_zsh_system_clipboard_get | read -d '' -r CLIPBOARD
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
@@ -118,20 +105,7 @@ function zsh-system-clipboard-vicmd-vi-put-after() {
 zle -N zsh-system-clipboard-vicmd-vi-put-after
 
 function zsh-system-clipboard-vicmd-vi-put-before() {
-	local CLIPBOARD="$(_zsh_system_clipboard_get; printf '%s' x)"
-	CLIPBOARD="${CLIPBOARD%x}"
-	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
-		local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
-		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" ]]; then
-			# we don't have any more newlines so in RBUFFER
-			CLIPBOARD=$'\n'"${CLIPBOARD%%$'\n'*}"
-			CURSOR="${#BUFFER}"
-		else
-			CLIPBOARD="${CLIPBOARD%%$'\n'*}"$'\n'
-			local RBUFFER_LINE_END_INDEX="${#RBUFFER_UNTIL_LINE_END}"
-			CURSOR="$(( ${CURSOR} + ${RBUFFER_LINE_END_INDEX} ))"
-		fi
-	fi
+	_zsh_system_clipboard_get | read -d '' -r CLIPBOARD
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
