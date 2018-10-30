@@ -90,35 +90,28 @@ case "$OSTYPE" {
 unfunction _zsh_system_clipboard_error
 unfunction _zsh_system_clipboard_suggest_to_install
 
-function _zsh_system_clipboard_set() {
-	if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] {
-		# Set also tmux clipboard buffer if tmux available.
-		if (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]) {
-			tmux set-buffer -- "$*"
-		}
-	}
-	eval "${ZSH_SYSTEM_CLIPBOARD[set]}" <<< "$1"
-	return true
-}
-function _zsh_system_clipboard_get() {
-	eval "${ZSH_SYSTEM_CLIPBOARD[get]}"
-	return true
-}
+if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]); then
+	# Based on https://unix.stackexchange.com/a/28519/135796
+	alias zsh-system-clipboard-set="tee >(tmux save-buffer -) | ${ZSH_SYSTEM_CLIPBOARD[set]}"
+else
+	alias zsh-system-clipboard-set="${ZSH_SYSTEM_CLIPBOARD[set]}"
+fi
+alias zsh-system-clipboard-get="${ZSH_SYSTEM_CLIPBOARD[get]}"
 
 function zsh-system-clipboard-vicmd-vi-yank() {
 	zle vi-yank
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-yank
 
 function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 	zle vi-yank-whole-line
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 
 function zsh-system-clipboard-vicmd-vi-put-after() {
-	_zsh_system_clipboard_get | read -d '' -r CLIPBOARD
+	zsh-system-clipboard-get | read -d '' -r CLIPBOARD
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
@@ -126,7 +119,7 @@ function zsh-system-clipboard-vicmd-vi-put-after() {
 zle -N zsh-system-clipboard-vicmd-vi-put-after
 
 function zsh-system-clipboard-vicmd-vi-put-before() {
-	_zsh_system_clipboard_get | read -d '' -r CLIPBOARD
+	zsh-system-clipboard-get | read -d '' -r CLIPBOARD
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
@@ -135,55 +128,55 @@ zle -N zsh-system-clipboard-vicmd-vi-put-before
 
 function zsh-system-clipboard-vicmd-vi-delete() {
 	zle vi-delete
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-delete
 
 function zsh-system-clipboard-vicmd-vi-delete-char() {
 	zle vi-delete-char
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-delete-char
 
 function zsh-system-clipboard-vicmd-vi-change-eol() {
 	zle vi-change-eol
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-change-eol
 
 function zsh-system-clipboard-vicmd-vi-kill-eol() {
 	zle vi-kill-eol
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-kill-eol
 
 function zsh-system-clipboard-vicmd-vi-change-whole-line() {
 	zle vi-change-whole-line
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-change-whole-line
 
 function zsh-system-clipboard-vicmd-vi-change() {
 	zle vi-change
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-change
 
 function zsh-system-clipboard-vicmd-vi-substitue() {
 	zle vi-substitue
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-substitue
 
 function zsh-system-clipboard-vicmd-vi-delete-char() {
 	zle vi-delete-char
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-delete-char
 
 function zsh-system-clipboard-vicmd-vi-backward-delete-char() {
 	zle vi-backward-delete-char
-	_zsh_system_clipboard_set "$CUTBUFFER"
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-backward-delete-char
 
