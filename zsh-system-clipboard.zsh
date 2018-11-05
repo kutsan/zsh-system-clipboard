@@ -111,6 +111,7 @@ function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 
 function zsh-system-clipboard-vicmd-vi-put-after() {
+	local CLIPBOARD
 	zsh-system-clipboard-get | read -d '' -r CLIPBOARD
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
@@ -119,6 +120,7 @@ function zsh-system-clipboard-vicmd-vi-put-after() {
 zle -N zsh-system-clipboard-vicmd-vi-put-after
 
 function zsh-system-clipboard-vicmd-vi-put-before() {
+	local CLIPBOARD
 	zsh-system-clipboard-get | read -d '' -r CLIPBOARD
 
 	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
