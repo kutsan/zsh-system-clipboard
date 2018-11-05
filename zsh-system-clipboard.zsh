@@ -92,7 +92,7 @@ unfunction _zsh_system_clipboard_suggest_to_install
 
 if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]); then
 	# Based on https://unix.stackexchange.com/a/28519/135796
-	alias zsh-system-clipboard-set="tee >(tmux save-buffer -) | ${ZSH_SYSTEM_CLIPBOARD[set]}"
+	alias zsh-system-clipboard-set='tee >(tmux set-buffer -- $(cat -)) | '"${ZSH_SYSTEM_CLIPBOARD[set]}"
 else
 	alias zsh-system-clipboard-set="${ZSH_SYSTEM_CLIPBOARD[set]}"
 fi
