@@ -100,20 +100,36 @@ alias zsh-system-clipboard-get="${ZSH_SYSTEM_CLIPBOARD[get]}"
 
 function zsh-system-clipboard-vicmd-vi-yank() {
 	zle vi-yank
-	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
+	if [[ "${KEYS}" == "y" ]]; then # A new line should be added to the end
+		printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
+	else
+		printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
+	fi
 }
 zle -N zsh-system-clipboard-vicmd-vi-yank
 
 function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 	zle vi-yank-whole-line
-	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
+	printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 
 function zsh-system-clipboard-vicmd-vi-put-after() {
 	local CLIPBOARD
-	zsh-system-clipboard-get | read -d '' -r CLIPBOARD
-
+	CLIPBOARD="$(zsh-system-clipboard-get; printf '%s' x)"
+	CLIPBOARD="${CLIPBOARD%x}"
+	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
+		local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
+		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" ]]; then
+			# we don't have any more newlines so in RBUFFER
+			CLIPBOARD=$'\n'"${CLIPBOARD%%$'\n'}"
+			CURSOR="${#BUFFER}"
+		else
+			CLIPBOARD="${CLIPBOARD%%$'\n'}"$'\n'
+			local RBUFFER_LINE_END_INDEX="${#RBUFFER_UNTIL_LINE_END}"
+			CURSOR="$(( ${CURSOR} + ${RBUFFER_LINE_END_INDEX} ))"
+		fi
+	fi
 	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
 }
@@ -121,8 +137,20 @@ zle -N zsh-system-clipboard-vicmd-vi-put-after
 
 function zsh-system-clipboard-vicmd-vi-put-before() {
 	local CLIPBOARD
-	zsh-system-clipboard-get | read -d '' -r CLIPBOARD
-
+	CLIPBOARD="$(zsh-system-clipboard-get; printf '%s' x)"
+	CLIPBOARD="${CLIPBOARD%x}"
+	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
+		local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
+		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" ]]; then
+			# we don't have any more newlines so in RBUFFER
+			CLIPBOARD=$'\n'"${CLIPBOARD%%$'\n'}"
+			CURSOR="${#BUFFER}"
+		else
+			CLIPBOARD="${CLIPBOARD%%$'\n'}"$'\n'
+			local RBUFFER_LINE_END_INDEX="${#RBUFFER_UNTIL_LINE_END}"
+			CURSOR="$(( ${CURSOR} + ${RBUFFER_LINE_END_INDEX} ))"
+		fi
+	fi
 	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
 	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
 }
@@ -130,7 +158,11 @@ zle -N zsh-system-clipboard-vicmd-vi-put-before
 
 function zsh-system-clipboard-vicmd-vi-delete() {
 	zle vi-delete
-	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
+	if [[ "${KEYS}" == "d" ]]; then # A new line should be added to the end
+		printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
+	else
+		printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
+	fi
 }
 zle -N zsh-system-clipboard-vicmd-vi-delete
 
@@ -154,7 +186,7 @@ zle -N zsh-system-clipboard-vicmd-vi-kill-eol
 
 function zsh-system-clipboard-vicmd-vi-change-whole-line() {
 	zle vi-change-whole-line
-	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
+	printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
 }
 zle -N zsh-system-clipboard-vicmd-vi-change-whole-line
 
