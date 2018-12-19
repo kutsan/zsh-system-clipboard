@@ -100,7 +100,7 @@ alias zsh-system-clipboard-get="${ZSH_SYSTEM_CLIPBOARD[get]}"
 
 function zsh-system-clipboard-vicmd-vi-yank() {
 	zle vi-yank
-	if [[ "${KEYS}" == "y" ]]; then # A new line should be added to the end
+	if [[ "${KEYS}" == "y" && "${KEYMAP}" == 'viopp' ]]; then # A new line should be added to the end
 		printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
 	else
 		printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
