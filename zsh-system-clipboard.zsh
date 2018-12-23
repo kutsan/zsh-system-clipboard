@@ -37,6 +37,9 @@ case "$OSTYPE" {
 		}
 		;;
 	linux*|freebsd*)
+		if [[ ! -z "$DISPLAY" ]]; then
+			return 0
+		fi
 		if (hash xclip 2>/dev/null) {
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
@@ -54,10 +57,8 @@ case "$OSTYPE" {
 					}
 					;;
 			}
-			if [[ ! -z $DISPLAY ]]; then
-				typeset -g ZSH_SYSTEM_CLIPBOARD[set]="xclip -sel $clipboard_selection -in"
-				typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
-			fi
+			typeset -g ZSH_SYSTEM_CLIPBOARD[set]="xclip -sel $clipboard_selection -in"
+			typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
 		} elif (hash xsel 2>/dev/null) {
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
@@ -75,10 +76,8 @@ case "$OSTYPE" {
 					}
 					;;
 			}
-			if [[ ! -z $DISPLAY ]]; then
-				typeset -g ZSH_SYSTEM_CLIPBOARD[set]="xsel $clipboard_selection -i"
-				typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xsel $clipboard_selection -o"
-			fi
+			typeset -g ZSH_SYSTEM_CLIPBOARD[set]="xsel $clipboard_selection -i"
+			typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xsel $clipboard_selection -o"
 		} else {
 			_zsh_system_clipboard_suggest_to_install 'xclip or xsel'
 		}
