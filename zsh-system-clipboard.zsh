@@ -18,28 +18,24 @@ function _zsh_system_clipboard_suggest_to_install() {
 	_zsh_system_clipboard_error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
 }
 
-typeset -A ZSH_SYSTEM_CLIPBOARD
 case "$OSTYPE" {
 	darwin*)
 		if ((hash pbcopy && hash pbpaste) 2>/dev/null) {
-			typeset -g ZSH_SYSTEM_CLIPBOARD[set]='pbcopy'
-			typeset -g ZSH_SYSTEM_CLIPBOARD[get]='pbpaste'
+			alias _zsh_system_clipboard_set='pbcopy'
+			alias _zsh_system_clipboard_get='pbpaste'
 		} else {
 			_zsh_system_clipboard_suggest_to_install 'pbcopy, pbpaste'
 		}
 		;;
 	linux-android*)
 		if ((hash termux-clipboard-set && hash termux-clipboard-get) 2>/dev/null) {
-			typeset -g ZSH_SYSTEM_CLIPBOARD[set]='termux-clipboard-set'
-			typeset -g ZSH_SYSTEM_CLIPBOARD[get]='termux-clipboard-get'
+			alias _zsh_system_clipboard_set='termux-clipboard-set'
+			alias _zsh_system_clipboard_get='termux-clipboard-get'
 		} else {
 			_zsh_system_clipboard_suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
 		}
 		;;
 	linux*|freebsd*)
-		if [[ ! -z "$DISPLAY" ]]; then
-			return 0
-		fi
 		if (hash xclip 2>/dev/null) {
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
@@ -57,8 +53,8 @@ case "$OSTYPE" {
 					}
 					;;
 			}
-			typeset -g ZSH_SYSTEM_CLIPBOARD[set]="xclip -sel $clipboard_selection -in"
-			typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xclip -sel $clipboard_selection -out"
+			alias _zsh_system_clipboard_set="xclip -sel $clipboard_selection -in"
+			alias _zsh_system_clipboard_get="xclip -sel $clipboard_selection -out"
 		} elif (hash xsel 2>/dev/null) {
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
@@ -76,8 +72,8 @@ case "$OSTYPE" {
 					}
 					;;
 			}
-			typeset -g ZSH_SYSTEM_CLIPBOARD[set]="xsel $clipboard_selection -i"
-			typeset -g ZSH_SYSTEM_CLIPBOARD[get]="xsel $clipboard_selection -o"
+			alias _zsh_system_clipboard_set="xsel $clipboard_selection -i"
+			alias _zsh_system_clipboard_get="xsel $clipboard_selection -o"
 		} else {
 			_zsh_system_clipboard_suggest_to_install 'xclip or xsel'
 		}
@@ -90,12 +86,34 @@ unfunction _zsh_system_clipboard_error
 unfunction _zsh_system_clipboard_suggest_to_install
 
 if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]); then
-	# Based on https://unix.stackexchange.com/a/28519/135796
-	alias zsh-system-clipboard-set='tee >(tmux set-buffer -- $(cat -)) | '"${ZSH_SYSTEM_CLIPBOARD[set]}"
+	if [[ ! -z "$DISPLAY" ]]; then
+		zsh-system-clipboard-set(){
+			# Based on https://unix.stackexchange.com/a/28519/135796
+			tee >(tmux set-buffer -- $(cat -)) | _zsh_system_clipboard_set
+		}
+		zsh-system-clipboard-get(){
+			_zsh_system_clipboard_get
+		}
+	else
+		zsh-system-clipboard-set(){
+			tmux load-buffer -
+		}
+		zsh-system-clipboard-get(){
+			tmux show-buffer
+		}
+	fi
 else
-	alias zsh-system-clipboard-set="${ZSH_SYSTEM_CLIPBOARD[set]}"
+	if [[ ! -z "$DISPLAY" ]]; then
+		zsh-system-clipboard-set(){
+			_zsh_system_clipboard_set
+		}
+		zsh-system-clipboard-get(){
+			_zsh_system_clipboard_get
+		}
+	else
+		return
+	fi
 fi
-alias zsh-system-clipboard-get="${ZSH_SYSTEM_CLIPBOARD[get]}"
 
 function zsh-system-clipboard-vicmd-vi-yank() {
 	zle vi-yank
