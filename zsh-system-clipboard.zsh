@@ -16,6 +16,7 @@ function _zsh_system_clipboard_error() {
 
 function _zsh_system_clipboard_suggest_to_install() {
 	_zsh_system_clipboard_error "Could not find any available clipboard manager. Make sure you have \033[01m${@}\033[0m installed."
+	return 1
 }
 
 case "$OSTYPE" {
@@ -80,40 +81,60 @@ case "$OSTYPE" {
 		;;
 	*)
 		_zsh_system_clipboard_error 'Unsupported system.'
+		return 1
 		;;
 }
 unfunction _zsh_system_clipboard_error
 unfunction _zsh_system_clipboard_suggest_to_install
 
-if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]); then
-	if [[ ! -z "$DISPLAY" ]]; then
-		zsh-system-clipboard-set(){
-			# Based on https://unix.stackexchange.com/a/28519/135796
-			tee >(tmux set-buffer -- $(cat -)) | _zsh_system_clipboard_set
-		}
+case "$OSTYPE" {
+	linux*|freebsd*)
+		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]); then
+			if [[ ! -z "$DISPLAY" ]]; then
+				zsh-system-clipboard-set(){
+					# Based on https://unix.stackexchange.com/a/28519/135796
+					tee >(tmux set-buffer -- $(cat -)) | _zsh_system_clipboard_set
+				}
+				zsh-system-clipboard-get(){
+					_zsh_system_clipboard_get
+				}
+			else
+				zsh-system-clipboard-set(){
+					tmux load-buffer -
+				}
+				zsh-system-clipboard-get(){
+					tmux show-buffer
+				}
+			fi
+		else
+			if [[ ! -z "$DISPLAY" ]]; then
+				zsh-system-clipboard-set(){
+					_zsh_system_clipboard_set
+				}
+				zsh-system-clipboard-get(){
+					_zsh_system_clipboard_get
+				}
+			else
+				return 1
+			fi
+		fi
+		;;
+	*)
+		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]); then
+			zsh-system-clipboard-set(){
+				# Based on https://unix.stackexchange.com/a/28519/135796
+				tee >(tmux set-buffer -- $(cat -)) | _zsh_system_clipboard_set
+			}
+		else
+			zsh-system-clipboard-set(){
+				_zsh_system_clipboard_set
+			}
+		fi
 		zsh-system-clipboard-get(){
 			_zsh_system_clipboard_get
 		}
-	else
-		zsh-system-clipboard-set(){
-			tmux load-buffer -
-		}
-		zsh-system-clipboard-get(){
-			tmux show-buffer
-		}
-	fi
-else
-	if [[ ! -z "$DISPLAY" ]]; then
-		zsh-system-clipboard-set(){
-			_zsh_system_clipboard_set
-		}
-		zsh-system-clipboard-get(){
-			_zsh_system_clipboard_get
-		}
-	else
-		return
-	fi
-fi
+		;;
+}
 
 function zsh-system-clipboard-vicmd-vi-yank() {
 	zle vi-yank
