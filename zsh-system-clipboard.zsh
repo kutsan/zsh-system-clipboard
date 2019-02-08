@@ -93,7 +93,7 @@ case "$OSTYPE" {
 			if [[ ! -z "$DISPLAY" ]]; then
 				zsh-system-clipboard-set(){
 					# Based on https://unix.stackexchange.com/a/28519/135796
-					tee >(tmux set-buffer -- $(cat -)) | _zsh_system_clipboard_set
+					tee >(tmux set-buffer -- "$(cat -)") | _zsh_system_clipboard_set
 				}
 				zsh-system-clipboard-get(){
 					_zsh_system_clipboard_get
@@ -123,7 +123,7 @@ case "$OSTYPE" {
 		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]); then
 			zsh-system-clipboard-set(){
 				# Based on https://unix.stackexchange.com/a/28519/135796
-				tee >(tmux set-buffer -- $(cat -)) | _zsh_system_clipboard_set
+				tee >(tmux set-buffer -- "$(cat -)") | _zsh_system_clipboard_set
 			}
 		else
 			zsh-system-clipboard-set(){
