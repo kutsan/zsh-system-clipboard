@@ -70,6 +70,10 @@ It will show pretty-printed errors via `stderr` or `stdout` if something went wr
 
 Special thanks to _Doron Behar ([@doronbehar](https://github.com/doronbehar))_ for their interests, suggestions, time and pull requests.
 
+## Similar Projects
+
+- [xPMo/zsh-vim-system-clipboard](https://github.com/xPMo/zsh-vim-system-clipboard)
+
 ## License
 
 GPL-3.0
