@@ -72,7 +72,7 @@ Special thanks to _Doron Behar ([@doronbehar](https://github.com/doronbehar))_ f
 
 ## Similar Projects
 
-- [xPMo/zsh-vim-system-clipboard](https://github.com/xPMo/zsh-vim-system-clipboard)
+- [zsh-vi-more/evil-registers](https://github.com/zsh-vi-more/evil-registers)
 
 ## License
 
