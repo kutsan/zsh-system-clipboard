@@ -152,8 +152,11 @@ function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 }
 zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 
-function zsh-system-clipboard-vicmd-vi-put-after() {
+# Wrapper function for common calculations of both put-after and put-before
+function zsh-system-clipboard-vicmd-vi-put() {
 	local CLIPBOARD
+	# TODO: put-before of whole line puts the selection in the end
+	# TODO: put-after of a not-whole-line, when cursor is on empty line, puts selcetion at the start of the line afterwards
 	CLIPBOARD="$(zsh-system-clipboard-get; printf '%s' x)"
 	CLIPBOARD="${CLIPBOARD%x}"
 	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
@@ -168,29 +171,23 @@ function zsh-system-clipboard-vicmd-vi-put-after() {
 			CURSOR="$(( ${CURSOR} + ${RBUFFER_LINE_END_INDEX} ))"
 		fi
 	fi
-	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
-	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
+	local mode="$1"
+	if [[ "$mode" == "after" ]]; then
+		BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
+		CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
+	else
+		BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
+		CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
+	fi
+}
+
+function zsh-system-clipboard-vicmd-vi-put-after() {
+	zsh-system-clipboard-vicmd-vi-put after
 }
 zle -N zsh-system-clipboard-vicmd-vi-put-after
 
 function zsh-system-clipboard-vicmd-vi-put-before() {
-	local CLIPBOARD
-	CLIPBOARD="$(zsh-system-clipboard-get; printf '%s' x)"
-	CLIPBOARD="${CLIPBOARD%x}"
-	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
-		local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
-		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" ]]; then
-			# we don't have any more newlines so in RBUFFER
-			CLIPBOARD=$'\n'"${CLIPBOARD%%$'\n'}"
-			CURSOR="${#BUFFER}"
-		else
-			CLIPBOARD="${CLIPBOARD%%$'\n'}"$'\n'
-			local RBUFFER_LINE_END_INDEX="${#RBUFFER_UNTIL_LINE_END}"
-			CURSOR="$(( ${CURSOR} + ${RBUFFER_LINE_END_INDEX} ))"
-		fi
-	fi
-	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
-	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
+	zsh-system-clipboard-vicmd-vi-put before
 }
 zle -N zsh-system-clipboard-vicmd-vi-put-before
 
