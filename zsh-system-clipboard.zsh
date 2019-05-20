@@ -155,23 +155,34 @@ zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 # Wrapper function for common calculations of both put-after and put-before
 function zsh-system-clipboard-vicmd-vi-put() {
 	local CLIPBOARD
-	# TODO: put-before of whole line puts the selection in the end
+	local mode="$1"
 	# TODO: put-after of a not-whole-line, when cursor is on empty line, puts selcetion at the start of the line afterwards
 	CLIPBOARD="$(zsh-system-clipboard-get; printf '%s' x)"
 	CLIPBOARD="${CLIPBOARD%x}"
+	# Checks if the last character is a new line
 	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
+		# if so, we need to check if we have more lines below the cursor.
+		# The following variable gets the contents of the whole RBUFFER up
+		# until the next new-line.
 		local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
-		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" ]]; then
-			# we don't have any more newlines so in RBUFFER
+		# therefor, this comparison tells us if we have more new lines or not
+		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" && "$mode" == "after" ]]; then
+			# we don't have any more newlines in RBUFFER.
+			# Therefor, we add a new line at the beginning of our original
+			# clipboard so it will append the whole BUFFER eventually
 			CLIPBOARD=$'\n'"${CLIPBOARD%%$'\n'}"
-			CURSOR="${#BUFFER}"
+		fi
+		# If we are pasting a whole-line selection we need to put the cursor at
+		# the correct position, according to our mode of input
+		if [[ "$mode" == "after" ]]; then
+			CURSOR="$(( ${CURSOR} + ${#RBUFFER_UNTIL_LINE_END} ))"
 		else
-			CLIPBOARD="${CLIPBOARD%%$'\n'}"$'\n'
-			local RBUFFER_LINE_END_INDEX="${#RBUFFER_UNTIL_LINE_END}"
-			CURSOR="$(( ${CURSOR} + ${RBUFFER_LINE_END_INDEX} ))"
+			# We use the single % for the smallest match possible
+			local LBUFFER_UNTIL_LINE_END="${LBUFFER%$'\n'*}"
+			echo LBUFFER_UNTIL_LINE_END is "${(q)LBUFFER_UNTIL_LINE_END}" >> ~/zdbg
+			CURSOR="$(( ${#LBUFFER_UNTIL_LINE_END} + 1 ))"
 		fi
 	fi
-	local mode="$1"
 	if [[ "$mode" == "after" ]]; then
 		BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 		CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
