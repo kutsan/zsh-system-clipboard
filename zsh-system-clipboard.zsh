@@ -152,51 +152,62 @@ function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 }
 zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 
-function zsh-system-clipboard-vicmd-vi-put-after() {
+# Wrapper function for common calculations of both put-after and put-before
+function zsh-system-clipboard-vicmd-vi-put() {
 	local CLIPBOARD
+	local mode="$1"
 	CLIPBOARD="$(zsh-system-clipboard-get; printf '%s' x)"
 	CLIPBOARD="${CLIPBOARD%x}"
+	local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
+	# Checks if the last character is a new line
 	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
-		local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
-		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" ]]; then
-			# we don't have any more newlines so in RBUFFER
+		# if so, we need to check if we have more lines below the cursor.
+		# The following variable gets the contents of the whole RBUFFER up
+		# until the next new-line. Therefor, this comparison tells us if we have
+		# more new lines or not
+		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" && "$mode" == "after" ]]; then
+			# we don't have any more newlines in RBUFFER.
+			# Therefor, we add a new line at the beginning of our original
+			# clipboard so it will append the whole BUFFER eventually
 			CLIPBOARD=$'\n'"${CLIPBOARD%%$'\n'}"
-			CURSOR="${#BUFFER}"
+		fi
+		# If we are pasting a whole-line selection we need to put the cursor at
+		# the correct position, according to our mode of input
+		if [[ "$mode" == "after" ]]; then
+			CURSOR="$(( ${CURSOR} + ${#RBUFFER_UNTIL_LINE_END} ))"
 		else
-			CLIPBOARD="${CLIPBOARD%%$'\n'}"$'\n'
-			local RBUFFER_LINE_END_INDEX="${#RBUFFER_UNTIL_LINE_END}"
-			CURSOR="$(( ${CURSOR} + ${RBUFFER_LINE_END_INDEX} ))"
+			# We use the single % for the smallest match possible
+			local LBUFFER_UNTIL_LINE_END="${LBUFFER%$'\n'*}"
+			CURSOR="$(( ${#LBUFFER_UNTIL_LINE_END} + 1 ))"
 		fi
 	fi
-	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
-	CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
+	# If our selection is not whole lines, we need to check whether the line
+	# our cursor is on an empty line or not and if it is, on the final
+	# BUFFER modification, we'll always use the after mode. The length of
+	# ${RBUFFER_UNTIL_LINE_END} tells as so - if it's 0
+	if [[ "$mode" == "after" && ${#RBUFFER_UNTIL_LINE_END} != "0" ]]; then
+		BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
+		CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
+	else
+		BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
+		CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
+	fi
+}
+
+function zsh-system-clipboard-vicmd-vi-put-after() {
+	zsh-system-clipboard-vicmd-vi-put after
 }
 zle -N zsh-system-clipboard-vicmd-vi-put-after
 
 function zsh-system-clipboard-vicmd-vi-put-before() {
-	local CLIPBOARD
-	CLIPBOARD="$(zsh-system-clipboard-get; printf '%s' x)"
-	CLIPBOARD="${CLIPBOARD%x}"
-	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
-		local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
-		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" ]]; then
-			# we don't have any more newlines so in RBUFFER
-			CLIPBOARD=$'\n'"${CLIPBOARD%%$'\n'}"
-			CURSOR="${#BUFFER}"
-		else
-			CLIPBOARD="${CLIPBOARD%%$'\n'}"$'\n'
-			local RBUFFER_LINE_END_INDEX="${#RBUFFER_UNTIL_LINE_END}"
-			CURSOR="$(( ${CURSOR} + ${RBUFFER_LINE_END_INDEX} ))"
-		fi
-	fi
-	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
-	CURSOR=$(( $#LBUFFER + $#CLIPBOARD - 1 ))
+	zsh-system-clipboard-vicmd-vi-put before
 }
 zle -N zsh-system-clipboard-vicmd-vi-put-before
 
 function zsh-system-clipboard-vicmd-vi-delete() {
+	local region_was_active=${REGION_ACTIVE}
 	zle vi-delete
-	if [[ "${KEYS}" == "d" ]]; then # A new line should be added to the end
+	if [[ "${KEYS}" == "d" && "${region_was_active}" == 0 ]]; then # A new line should be added to the end
 		printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
 	else
 		printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
