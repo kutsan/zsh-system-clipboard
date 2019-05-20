@@ -48,6 +48,51 @@ typeset -g ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT='true'
 typeset -g ZSH_SYSTEM_CLIPBOARD_SELECTION='PRIMARY'
 ```
 
+## Configuration
+
+If you wish, you can disable the default bindings zsh-system-clipboard uses by setting the following in your environment:
+
+```zsh
+export ZSH_SYSTEM_CLIPBOARD_DISABLE_DEFAULT_MAPS=1
+```
+
+Why would I want to do that?
+
+zsh-system-clipboard modifies your key bindings by reading them in their current state and binds them to their corresponding widgets we implemented which change the system clipboard along the way. This variable enables you to bind the default bindings your way. This is useful if you wish e.g to use the same default bindings but with a certain prefix.
+
+This is the function that's inside `zsh-system-clipboard.zsh` which actually binds the default keys:
+
+```zsh
+function () {
+	local binded_keys i parts key cmd keymap
+	for keymap in vicmd visual emacs; do
+		binded_keys=(${(f)"$(bindkey -M $keymap)"})
+		for (( i = 1; i < ${#binded_keys[@]}; ++i )); do
+			parts=("${(z)binded_keys[$i]}")
+			key="${parts[1]}"
+			cmd="${parts[2]}"
+			if (( $+functions[zsh-system-clipboard-$keymap-$cmd] )); then
+				eval bindkey -M $keymap $key zsh-system-clipboard-$keymap-$cmd
+			fi
+		done
+	done
+}
+```
+
+You can change the line `eval bindkey -M $keymap $key zsh-system-clipboard-$keymap-$cmd` this way:
+
+```zsh
+				eval bindkey -M $keymap \"\ \"$key zsh-system-clipboard-$keymap-$cmd
+```
+
+And to make this change useful, unbind the single `" "` with:
+
+```zsh
+bindkey -ar " "
+```
+
+This setup will force you to use <kbd>space</kbd> to actually use the system clipboard - whether it's paste or copy.
+
 ## API
 
 The plugin itself provides a separate cross-platform clipboard API for internal widgets. You can use this API as a standalone function.

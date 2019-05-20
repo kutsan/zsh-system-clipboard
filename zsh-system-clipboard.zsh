@@ -265,6 +265,9 @@ zle -N zsh-system-clipboard-vicmd-vi-backward-delete-char
 
 # Bind keys to widgets.
 function () {
+	if [[ -n "$ZSH_SYSTEM_CLIPBOARD_DISABLE_DEFAULT_MAPS" ]]; then
+		return
+	fi
 	local binded_keys i parts key cmd keymap
 	for keymap in vicmd visual emacs; do
 		binded_keys=(${(f)"$(bindkey -M $keymap)"})
