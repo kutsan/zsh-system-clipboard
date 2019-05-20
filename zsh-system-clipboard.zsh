@@ -156,16 +156,15 @@ zle -N zsh-system-clipboard-vicmd-vi-yank-whole-line
 function zsh-system-clipboard-vicmd-vi-put() {
 	local CLIPBOARD
 	local mode="$1"
-	# TODO: put-after of a not-whole-line, when cursor is on empty line, puts selcetion at the start of the line afterwards
 	CLIPBOARD="$(zsh-system-clipboard-get; printf '%s' x)"
 	CLIPBOARD="${CLIPBOARD%x}"
+	local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
 	# Checks if the last character is a new line
 	if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
 		# if so, we need to check if we have more lines below the cursor.
 		# The following variable gets the contents of the whole RBUFFER up
-		# until the next new-line.
-		local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
-		# therefor, this comparison tells us if we have more new lines or not
+		# until the next new-line. Therefor, this comparison tells us if we have
+		# more new lines or not
 		if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" && "$mode" == "after" ]]; then
 			# we don't have any more newlines in RBUFFER.
 			# Therefor, we add a new line at the beginning of our original
@@ -179,11 +178,14 @@ function zsh-system-clipboard-vicmd-vi-put() {
 		else
 			# We use the single % for the smallest match possible
 			local LBUFFER_UNTIL_LINE_END="${LBUFFER%$'\n'*}"
-			echo LBUFFER_UNTIL_LINE_END is "${(q)LBUFFER_UNTIL_LINE_END}" >> ~/zdbg
 			CURSOR="$(( ${#LBUFFER_UNTIL_LINE_END} + 1 ))"
 		fi
 	fi
-	if [[ "$mode" == "after" ]]; then
+	# If our selection is not whole lines, we need to check whether the line
+	# our cursor is on an empty line or not and if it is, on the final
+	# BUFFER modification, we'll always use the after mode. The length of
+	# ${RBUFFER_UNTIL_LINE_END} tells as so - if it's 0
+	if [[ "$mode" == "after" && ${#RBUFFER_UNTIL_LINE_END} != "0" ]]; then
 		BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
 		CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
 	else
@@ -203,8 +205,9 @@ function zsh-system-clipboard-vicmd-vi-put-before() {
 zle -N zsh-system-clipboard-vicmd-vi-put-before
 
 function zsh-system-clipboard-vicmd-vi-delete() {
+	local region_was_active=${REGION_ACTIVE}
 	zle vi-delete
-	if [[ "${KEYS}" == "d" ]]; then # A new line should be added to the end
+	if [[ "${KEYS}" == "d" && "${region_was_active}" == 0 ]]; then # A new line should be added to the end
 		printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
 	else
 		printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
