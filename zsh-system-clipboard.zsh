@@ -10,6 +10,10 @@
 # @version v0.7.0
 ##
 
+function _zsh_system_clipboard_command_exists() {
+	type "$1" &> /dev/null;
+}
+
 function _zsh_system_clipboard_error() {
 	echo -e "\n\n  \033[41;37m ERROR \033[0m \033[01mzsh-system-clipboard:\033[0m $@\n" >&2
 }
@@ -21,23 +25,23 @@ function _zsh_system_clipboard_suggest_to_install() {
 
 case "$OSTYPE" {
 	darwin*)
-		if ((hash pbcopy && hash pbpaste) 2>/dev/null) {
+		if _zsh_system_clipboard_command_exists pbcopy && _zsh_system_clipboard_command_exists pbpaste; then
 			alias _zsh_system_clipboard_set='pbcopy'
 			alias _zsh_system_clipboard_get='pbpaste'
-		} else {
+		else
 			_zsh_system_clipboard_suggest_to_install 'pbcopy, pbpaste'
-		}
+		fi
 		;;
 	linux-android*)
-		if ((hash termux-clipboard-set && hash termux-clipboard-get) 2>/dev/null) {
+		if _zsh_system_clipboard_command_exists termux-clipboard-set && _zsh_system_clipboard_command_exists termux-clipboard-get; then
 			alias _zsh_system_clipboard_set='termux-clipboard-set'
 			alias _zsh_system_clipboard_get='termux-clipboard-get'
-		} else {
+		else
 			_zsh_system_clipboard_suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
-		}
+		fi
 		;;
 	linux*|freebsd*)
-		if (hash xclip 2>/dev/null) {
+		if _zsh_system_clipboard_command_exists xclip; then
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
 				PRIMARY)
@@ -56,7 +60,7 @@ case "$OSTYPE" {
 			}
 			alias _zsh_system_clipboard_set="xclip -sel $clipboard_selection -in"
 			alias _zsh_system_clipboard_get="xclip -sel $clipboard_selection -out"
-		} elif (hash xsel 2>/dev/null) {
+		elif _zsh_system_clipboard_command_exists xsel; then
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
 				PRIMARY)
@@ -75,9 +79,9 @@ case "$OSTYPE" {
 			}
 			alias _zsh_system_clipboard_set="xsel $clipboard_selection -i"
 			alias _zsh_system_clipboard_get="xsel $clipboard_selection -o"
-		} else {
+		else
 			_zsh_system_clipboard_suggest_to_install 'xclip or xsel'
-		}
+		fi
 		;;
 	*)
 		_zsh_system_clipboard_error 'Unsupported system.'
@@ -86,10 +90,11 @@ case "$OSTYPE" {
 }
 unfunction _zsh_system_clipboard_error
 unfunction _zsh_system_clipboard_suggest_to_install
+unfunction _zsh_system_clipboard_command_exists
 
 case "$OSTYPE" {
 	linux*|freebsd*)
-		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]); then
+		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && _zsh_system_clipboard_command_exists tmux && [[ "$TMUX" != '' ]]; then
 			if [[ ! -z "$DISPLAY" ]]; then
 				zsh-system-clipboard-set(){
 					# Based on https://unix.stackexchange.com/a/28519/135796
@@ -120,7 +125,7 @@ case "$OSTYPE" {
 		fi
 		;;
 	*)
-		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && (hash tmux &>/dev/null && [[ "$TMUX" != '' ]]); then
+		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && _zsh_system_clipboard_command_exists tmux && [[ "$TMUX" != '' ]]; then
 			zsh-system-clipboard-set(){
 				# Based on https://unix.stackexchange.com/a/28519/135796
 				tee >(tmux set-buffer -- "$(cat -)") | _zsh_system_clipboard_set
