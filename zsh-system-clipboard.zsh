@@ -88,10 +88,6 @@ case "$OSTYPE" {
 		return 1
 		;;
 }
-unfunction _zsh_system_clipboard_error
-unfunction _zsh_system_clipboard_suggest_to_install
-unfunction _zsh_system_clipboard_command_exists
-
 case "$OSTYPE" {
 	linux*|freebsd*)
 		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && _zsh_system_clipboard_command_exists tmux && [[ "$TMUX" != '' ]]; then
@@ -140,6 +136,9 @@ case "$OSTYPE" {
 		}
 		;;
 }
+unfunction _zsh_system_clipboard_error
+unfunction _zsh_system_clipboard_suggest_to_install
+unfunction _zsh_system_clipboard_command_exists
 
 function zsh-system-clipboard-vicmd-vi-yank() {
 	zle vi-yank
