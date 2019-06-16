@@ -10,6 +10,9 @@
 # @version v0.7.0
 ##
 
+# Make sure the aliases being expanded
+setopt localoptions ALIASES
+
 function _zsh_system_clipboard_command_exists() {
 	type "$1" &> /dev/null;
 }
