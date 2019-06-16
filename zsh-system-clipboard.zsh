@@ -26,16 +26,16 @@ function _zsh_system_clipboard_suggest_to_install() {
 case "$OSTYPE" {
 	darwin*)
 		if _zsh_system_clipboard_command_exists pbcopy && _zsh_system_clipboard_command_exists pbpaste; then
-			alias _zsh_system_clipboard_set='pbcopy'
-			alias _zsh_system_clipboard_get='pbpaste'
+			_zsh_system_clipboard_set=(pbcopy)
+			_zsh_system_clipboard_get=(pbpaste)
 		else
 			_zsh_system_clipboard_suggest_to_install 'pbcopy, pbpaste'
 		fi
 		;;
 	linux-android*)
 		if _zsh_system_clipboard_command_exists termux-clipboard-set && _zsh_system_clipboard_command_exists termux-clipboard-get; then
-			alias _zsh_system_clipboard_set='termux-clipboard-set'
-			alias _zsh_system_clipboard_get='termux-clipboard-get'
+			_zsh_system_clipboard_set=(termux-clipboard-set)
+			_zsh_system_clipboard_get=(termux-clipboard-get)
 		else
 			_zsh_system_clipboard_suggest_to_install 'Termux:API (from Play Store), termux-api (from apt package)'
 		fi
@@ -58,8 +58,8 @@ case "$OSTYPE" {
 					}
 					;;
 			}
-			alias _zsh_system_clipboard_set="xclip -sel $clipboard_selection -in"
-			alias _zsh_system_clipboard_get="xclip -sel $clipboard_selection -out"
+			_zsh_system_clipboard_set=(xclip -sel $clipboard_selection -in)
+			_zsh_system_clipboard_get=(xclip -sel $clipboard_selection -out)
 		elif _zsh_system_clipboard_command_exists xsel; then
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
@@ -77,8 +77,8 @@ case "$OSTYPE" {
 					}
 					;;
 			}
-			alias _zsh_system_clipboard_set="xsel $clipboard_selection -i"
-			alias _zsh_system_clipboard_get="xsel $clipboard_selection -o"
+			_zsh_system_clipboard_set=(xsel $clipboard_selection -i)
+			_zsh_system_clipboard_get=(xsel $clipboard_selection -o)
 		else
 			_zsh_system_clipboard_suggest_to_install 'xclip or xsel'
 		fi
@@ -94,10 +94,10 @@ case "$OSTYPE" {
 			if [[ ! -z "$DISPLAY" ]]; then
 				zsh-system-clipboard-set(){
 					# Based on https://unix.stackexchange.com/a/28519/135796
-					tee >(tmux set-buffer -- "$(cat -)") | _zsh_system_clipboard_set
+					tee >(tmux set-buffer -- "$(cat -)") | "${_zsh_system_clipboard_set[@]}"
 				}
 				zsh-system-clipboard-get(){
-					_zsh_system_clipboard_get
+					"${_zsh_system_clipboard_get[@]}"
 				}
 			else
 				zsh-system-clipboard-set(){
@@ -110,10 +110,10 @@ case "$OSTYPE" {
 		else
 			if [[ ! -z "$DISPLAY" ]]; then
 				zsh-system-clipboard-set(){
-					_zsh_system_clipboard_set
+					"${_zsh_system_clipboard_set[@]}"
 				}
 				zsh-system-clipboard-get(){
-					_zsh_system_clipboard_get
+					"${_zsh_system_clipboard_get[@]}"
 				}
 			else
 				return 1
@@ -124,15 +124,15 @@ case "$OSTYPE" {
 		if [[ "$ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT" != '' ]] && _zsh_system_clipboard_command_exists tmux && [[ "$TMUX" != '' ]]; then
 			zsh-system-clipboard-set(){
 				# Based on https://unix.stackexchange.com/a/28519/135796
-				tee >(tmux set-buffer -- "$(cat -)") | _zsh_system_clipboard_set
+				tee >(tmux set-buffer -- "$(cat -)") | "${_zsh_system_clipboard_set[@]}"
 			}
 		else
 			zsh-system-clipboard-set(){
-				_zsh_system_clipboard_set
+				"${_zsh_system_clipboard_set[@]}"
 			}
 		fi
 		zsh-system-clipboard-get(){
-			_zsh_system_clipboard_get
+			"${_zsh_system_clipboard_get[@]}"
 		}
 		;;
 }
