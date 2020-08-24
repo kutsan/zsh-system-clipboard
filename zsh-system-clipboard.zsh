@@ -41,7 +41,26 @@ case "$OSTYPE" {
 		fi
 		;;
 	linux*|freebsd*)
-		if _zsh_system_clipboard_command_exists xclip; then
+		if _zsh_system_clipboard_command_exists wl-copy; then
+			local clipboard_selection
+			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
+				PRIMARY)
+					clipboard_selection='-p'
+					;;
+				CLIPBOARD)
+					clipboard_selection=''
+					;;
+				*)
+					if [[ $ZSH_SYSTEM_CLIPBOARD_SELECTION != '' ]] {
+						_zsh_system_clipboard_error "\033[01m$ZSH_SYSTEM_CLIPBOARD_SELECTION\033[0m is not a valid value for \$ZSH_SYSTEM_CLIPBOARD_SELECTION. Please assign either 'PRIMARY' or 'CLIPBOARD'."
+					} else {
+						clipboard_selection=''
+					}
+					;;
+			}
+			_zsh_system_clipboard_set=(wl-copy $clipboard_selection)
+			_zsh_system_clipboard_get=(wl-paste $clipboard_selection -n)
+		elif _zsh_system_clipboard_command_exists xclip; then
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
 				PRIMARY)
@@ -80,7 +99,7 @@ case "$OSTYPE" {
 			_zsh_system_clipboard_set=(xsel $clipboard_selection -i)
 			_zsh_system_clipboard_get=(xsel $clipboard_selection -o)
 		else
-			_zsh_system_clipboard_suggest_to_install 'xclip or xsel'
+			_zsh_system_clipboard_suggest_to_install 'wl-clipboard, xclip, or xsel'
 		fi
 		;;
 	*)
