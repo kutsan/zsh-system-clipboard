@@ -41,7 +41,7 @@ case "$OSTYPE" {
 		fi
 		;;
 	linux*|freebsd*)
-		if _zsh_system_clipboard_command_exists wl-copy; then
+		if _zsh_system_clipboard_command_exists wl-copy && [[ -z "$DISPLAY" ]] && [[ -z "$ZSH_SYSTEM_CLIPBOARD_USE_WL_CLIPBOARD" ]]; then
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
 				PRIMARY)
@@ -100,6 +100,7 @@ case "$OSTYPE" {
 			_zsh_system_clipboard_get=(xsel $clipboard_selection -o)
 		else
 			_zsh_system_clipboard_suggest_to_install 'wl-clipboard, xclip, or xsel'
+			_zsh_system_clipboard_error "Note that if wl-clipboard is installed and \$DISPLAY is set, it won't be used. To override this behavior, set in your environment ZSH_SYSTEM_CLIPBOARD_USE_WL_CLIPBOARD"
 		fi
 		;;
 	*)

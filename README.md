@@ -40,6 +40,12 @@ The script `zsh-system-clipboard.zsh` parses the output of `bindkey -M vicmd`, `
 
 - `ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT`: Set it to `'true'` to enable tmux support. That way, if tmux available, every new clipboard content will be also sent to tmux clipboard buffers. Run `tmux choose-buffer` to view them.
 - `ZSH_SYSTEM_CLIPBOARD_SELECTION`: Specify which X selection to use for `xclip` or `xsel` or `wl-copy` utilities. Either `'PRIMARY'` or `'CLIPBOARD'`. Defaults to `'CLIPBOARD'`.
+- `ZSH_SYSTEM_CLIPBOARD_USE_WL_CLIPBOARD`: zsh-system-clipboard doesn't use `wl-copy` or `wl-paste` even if they are installed, if you have `$DISPLAY` set. However, it may be that you _use_ Wayland (and hence you can use these utilities), but `$DISPLAY` is set in your environment, perhaps because you use an X based terminal emulator on Wayland. In that case, if you don't have `xsel` or `xclip` installed and you wish to use `wl-copy` never the less, you should set this environment variable to `true`. To summarise, set this variable if:
+	 - You use Wayland.
+	 - You have `wl-clipboard` installed.
+   - You don't have `xsel` or `xclip` utilities installed.
+	 - You have `$DISPLAY` set in your environment (probably due to the X emulator).
+	 - You would like to use `wl-copy` and `wl-paste` utilities because you use Wayland.
 
 For example:
 
