@@ -287,6 +287,33 @@ function zsh-system-clipboard-vicmd-vi-backward-delete-char() {
 }
 zle -N zsh-system-clipboard-vicmd-vi-backward-delete-char
 
+function zsh-system-clipboard-visual-put-replace-selection(){
+	local PUT
+	local REPLACED
+
+	# store the clipboard content on PUT
+	PUT="$(zsh-system-clipboard-get; printf '%s' x)"
+	PUT="${PUT%x}"
+
+	# delete the current selection and store it on REPLACED
+	zsh-system-clipboard-vicmd-vi-delete
+	REPLACED="$(zsh-system-clipboard-get; printf '%s' x)"
+	REPLACED="${REPLACED%x}"
+
+	# reset the clipboard to PUT and put it before the current cursor positon
+	printf '%s' "$PUT" | zsh-system-clipboard-set
+	zsh-system-clipboard-vicmd-vi-put-before
+
+	# restore the clipbard to REPLACED
+	printf '%s' "$REPLACED" | zsh-system-clipboard-set
+}
+zle -N zsh-system-clipboard-visual-put-replace-selection
+
+function zsh-system-clipboard-visual-vi-delete(){
+	zsh-system-clipboard-vicmd-vi-delete
+}
+zle -N zsh-system-clipboard-visual-vi-delete
+
 # Bind keys to widgets.
 function () {
 	if [[ -n "$ZSH_SYSTEM_CLIPBOARD_DISABLE_DEFAULT_MAPS" ]]; then
