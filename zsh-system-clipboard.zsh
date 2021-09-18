@@ -41,7 +41,7 @@ case "$OSTYPE" {
 		fi
 		;;
 	linux*|freebsd*)
-		if _zsh_system_clipboard_command_exists wl-copy && [[ -z "$DISPLAY" ]] && [[ -z "$ZSH_SYSTEM_CLIPBOARD_USE_WL_CLIPBOARD" ]]; then
+		if _zsh_system_clipboard_command_exists wl-copy && [[ -z "$DISPLAY" ]] || [[ -v ZSH_SYSTEM_CLIPBOARD_USE_WL_CLIPBOARD ]]; then
 			local clipboard_selection
 			case $ZSH_SYSTEM_CLIPBOARD_SELECTION {
 				PRIMARY)
