@@ -170,6 +170,12 @@ function zsh-system-clipboard-vicmd-vi-yank() {
 }
 zle -N zsh-system-clipboard-vicmd-vi-yank
 
+function zsh-system-clipboard-vicmd-vi-yank-eol() {
+	zle vi-yank-eol
+	printf '%s' "$CUTBUFFER" | zsh-system-clipboard-set
+}
+zle -N zsh-system-clipboard-vicmd-vi-yank-eol
+
 function zsh-system-clipboard-vicmd-vi-yank-whole-line() {
 	zle vi-yank-whole-line
 	printf '%s\n' "$CUTBUFFER" | zsh-system-clipboard-set
