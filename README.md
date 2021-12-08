@@ -117,6 +117,15 @@ _zsh_system_clipboard_get
 
 It will show pretty-printed errors via `stderr` or `stdout` if something went wrong.
 
+## Additional mappings
+
+`zsh-system-clipboard` emulates all of zsh's standard mappings but with system clipboard support. Some default `zle` commands are not mapped by default both by us and both by ZSH. However we have the binding `zsh-system-clipboard-vicmd-vi-yank-eol` which emulates `vi-yank-eol` which copies text from cursor to the end of the line but we don't map it to anything, no matter what is `$ZSH_SYSTEM_CLIPBOARD_DISABLE_DEFAULT_MAPS`. To use it, add to your `~/.zshrc`:
+
+```zsh
+# Bind Y to yank until end of line
+bindkey -M vicmd Y zsh-system-clipboard-vicmd-vi-yank-eol
+```
+
 ## Thanks
 
 Special thanks to _Doron Behar ([@doronbehar](https://github.com/doronbehar))_ for their interests, suggestions, time and pull requests.
