@@ -128,16 +128,12 @@ case "$OSTYPE" {
 				}
 			fi
 		else
-			if [[ ! -z "$DISPLAY" ]]; then
-				zsh-system-clipboard-set(){
-					"${_zsh_system_clipboard_set[@]}"
-				}
-				zsh-system-clipboard-get(){
-					"${_zsh_system_clipboard_get[@]}"
-				}
-			else
-				return 1
-			fi
+			zsh-system-clipboard-set(){
+				"${_zsh_system_clipboard_set[@]}"
+			}
+			zsh-system-clipboard-get(){
+				"${_zsh_system_clipboard_get[@]}"
+			}
 		fi
 		;;
 	*)
