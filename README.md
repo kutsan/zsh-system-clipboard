@@ -1,3 +1,5 @@
+<img width="100" src="https://github.com/kutsan/zsh-system-clipboard/raw/master/.github/assets/logo.png" alt="Logo" />
+
 # zsh-system-clipboard
 
 Zsh plugin that adds key bindings support for ZLE (Zsh Line Editor) clipboard operations for vi emulation keymaps. It works under Linux, macOS and Android (via Termux).
