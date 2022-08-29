@@ -40,31 +40,25 @@ The script `zsh-system-clipboard.zsh` parses the output of `bindkey -M vicmd`, `
 
 ## Options
 
-- `ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT`: Set it to `'true'` to enable tmux support. That way, if tmux available, every new clipboard content will be also sent to tmux clipboard buffers. Run `tmux choose-buffer` to view them.
-- `ZSH_SYSTEM_CLIPBOARD_SELECTION`: Specify which X selection to use for `xclip` or `xsel` or `wl-copy` utilities. Either `'PRIMARY'` or `'CLIPBOARD'`. Defaults to `'CLIPBOARD'`.
-- `ZSH_SYSTEM_CLIPBOARD_USE_WL_CLIPBOARD`: zsh-system-clipboard doesn't use `wl-copy` or `wl-paste` even if they are installed, if you have `$DISPLAY` set. However, it may be that you _use_ Wayland (and hence you can use these utilities), but `$DISPLAY` is set in your environment, perhaps because you use an X based terminal emulator on Wayland. In that case, if you don't have `xsel` or `xclip` installed and you wish to use `wl-copy` never the less, you should set this environment variable to `true`. To summarise, set this variable if:
-	 - You use Wayland.
-	 - You have `wl-clipboard` installed.
-   - You don't have `xsel` or `xclip` utilities installed.
-	 - You have `$DISPLAY` set in your environment (probably due to the X emulator).
-	 - You would like to use `wl-copy` and `wl-paste` utilities because you use Wayland.
+### `ZSH_SYSTEM_CLIPBOARD_METHOD`
 
-For example:
+Sets the clipboard method to either of these options:
 
-```sh
-typeset -g ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT='true'
-typeset -g ZSH_SYSTEM_CLIPBOARD_SELECTION='PRIMARY'
-```
+| method value | meaning |
+| ------------ | ------- |
+| `tmux`       | Use Tmux's buffer as a clipboard - useful on systems without X / wayland, requires `set-option -g set-clipboard on` in `~/.tmux.conf` |
+| `xsc`        | Use [`xsel`](https://github.com/kfish/xsel) with 'CLIPBOARD' selection. |
+| `xsp`        | Use [`xsel`](https://github.com/kfish/xsel) with 'PRIMARY' selection. |
+| `xcc`        | Use [`xclip`](https://github.com/astrand/xclip) with 'CLIPBOARD' selection. |
+| `xcp`        | Use [`xclip`](https://github.com/astrand/xclip) with 'PRIMARY' selection. |
+| `wlc`        | Use [`wl-clipboard`](https://github.com/bugaevc/wl-clipboard) with 'CLIPBOARD' selection. |
+| `wlp`        | Use [`wl-clipboard`](https://github.com/bugaevc/wl-clipboard) with 'PRIMARY' selection. |
+| `pb`         | Use `pbcopy` and `pbpaste` on Darwin - method used by default on OSx. |
+| `termux`     | Use [Termux:API](https://wiki.termux.com/wiki/Termux:API) - method used by default on Android's termux |
 
-## Configuration
+### `ZSH_SYSTEM_CLIPBOARD_DISABLE_DEFAULT_MAPS`
 
-If you wish, you can disable the default bindings zsh-system-clipboard uses by setting the following in your environment:
-
-```zsh
-export ZSH_SYSTEM_CLIPBOARD_DISABLE_DEFAULT_MAPS=1
-```
-
-Why would I want to do that?
+If set to a non-empty value, it disables the default bindings zsh-system-clipboard uses. Why would you want to do that?
 
 zsh-system-clipboard modifies your key bindings by reading them in their current state and binds them to their corresponding widgets we implemented which change the system clipboard along the way. This variable enables you to bind the default bindings your way. This is useful if you wish e.g to use the same default bindings but with a certain prefix.
 
@@ -108,13 +102,13 @@ The plugin itself provides a separate cross-platform clipboard API for internal 
 To set system clipboard buffer:
 
 ```sh
-_zsh_system_clipboard_set "example text"
+zsh-system-clipboard-set "example text"
 ```
 
 To get system clipboard buffer to `stdout`:
 
 ```sh
-_zsh_system_clipboard_get
+zsh-system-clipboard-get
 ```
 
 It will show pretty-printed errors via `stderr` or `stdout` if something went wrong.
