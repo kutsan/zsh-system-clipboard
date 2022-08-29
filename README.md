@@ -46,7 +46,7 @@ Sets the clipboard method to either of these options:
 
 | method value | meaning |
 | ------------ | ------- |
-| `tmux`       | Use Tmux's buffer as a clipboard - useful on systems without X / wayland. |
+| `tmux`       | Use Tmux's buffer as a clipboard - useful on systems without X / wayland, requires `set-option -g set-clipboard on` in `~/.tmux.conf` |
 | `xsc`        | Use [`xsel`](https://github.com/kfish/xsel) with 'CLIPBOARD' selection. |
 | `xsp`        | Use [`xsel`](https://github.com/kfish/xsel) with 'PRIMARY' selection. |
 | `xcc`        | Use [`xclip`](https://github.com/astrand/xclip) with 'CLIPBOARD' selection. |
