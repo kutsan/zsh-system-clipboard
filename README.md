@@ -25,13 +25,14 @@ zplug "kutsan/zsh-system-clipboard"
 Clone this repository somewhere,
 
 ```
-git clone https://github.com/kutsan/zsh-system-clipboard ~/.zsh/plugins/zsh-system-clipboard
+git clone https://github.com/kutsan/zsh-system-clipboard ${ZSH_CUSTOM:-~/.zsh}/plugins/zsh-system-clipboard
+
 ```
 
 Source the [`zsh-system-clipboard.zsh`](https://github.com/kutsan/zsh-system-clipboard/blob/master/zsh-system-clipboard.zsh) file in your `~/.zshrc`.
 
 ```sh
-source "$HOME/.zsh/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh"
+source "${ZSH_CUSTOM:-~/.zsh}/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh"
 ```
 
 The script `zsh-system-clipboard.zsh` parses the output of `bindkey -M vicmd`, `bindkey -M emacs`, `bindkey -M visual` in order to rebind your keys (along with the default ones) the [`ZLE widgets`](http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets) functions that copy from and paste to the system clipboard. This means that you should put all of your bindings before sourcing `zsh-system-clipboard.zsh` in your `~/.zshrc`.
