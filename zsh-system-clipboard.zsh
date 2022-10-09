@@ -40,7 +40,7 @@ if [[ "$ZSH_SYSTEM_CLIPBOARD_METHOD" == "" ]]; then
 			fi
 			;;
 		linux*|freebsd*)
-			if [[ "$DISPLAY" == "" ]]; then
+			if _zsh_system_clipboard_command_exists wl-copy; then
 				ZSH_SYSTEM_CLIPBOARD_METHOD="wlc"
 			elif _zsh_system_clipboard_command_exists xclip; then
 				ZSH_SYSTEM_CLIPBOARD_METHOD="xcc"
