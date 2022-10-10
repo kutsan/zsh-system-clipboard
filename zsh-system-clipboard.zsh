@@ -40,15 +40,12 @@ if [[ "$ZSH_SYSTEM_CLIPBOARD_METHOD" == "" ]]; then
 			fi
 			;;
 		linux*|freebsd*)
-			if _zsh_system_clipboard_command_exists wl-copy && ( [[ "$WAYLAND_DISPLAY" != "" ]] || [[ "$XDG_SESSION_TYPE" == wayland ]] ); then
+			if _zsh_system_clipboard_command_exists wl-copy && [[ "$WAYLAND_DISPLAY" != "" ]]; then
 				ZSH_SYSTEM_CLIPBOARD_METHOD="wlc"
 			elif _zsh_system_clipboard_command_exists xclip && [[ "$DISPLAY" != "" ]]; then
 				ZSH_SYSTEM_CLIPBOARD_METHOD="xcc"
 			elif _zsh_system_clipboard_command_exists xsel && [[ "$DISPLAY" != "" ]]; then
 				ZSH_SYSTEM_CLIPBOARD_METHOD="xsc"
-			elif [[ "$SSH_TTY" != "" ]] || [[ "$XDG_SESSION_TYPE" == tty ]]; then
-				# Stay silent when there is no GUI running
-				return 0
 			else
 				_zsh_system_clipboard_suggest_to_install 'wl-clipboard / xclip / xsel'
 			fi
