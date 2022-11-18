@@ -42,12 +42,12 @@ if [[ "$ZSH_SYSTEM_CLIPBOARD_METHOD" == "" ]]; then
 		linux*|freebsd*)
 			if _zsh_system_clipboard_command_exists wl-copy; then
 				ZSH_SYSTEM_CLIPBOARD_METHOD="wlc"
-			elif _zsh_system_clipboard_command_exists xclip; then
-				ZSH_SYSTEM_CLIPBOARD_METHOD="xcc"
 			elif _zsh_system_clipboard_command_exists xsel; then
 				ZSH_SYSTEM_CLIPBOARD_METHOD="xsc"
+			elif _zsh_system_clipboard_command_exists xclip; then
+				ZSH_SYSTEM_CLIPBOARD_METHOD="xcc"
 			else
-				_zsh_system_clipboard_suggest_to_install 'wl-clipboard / xclip / xsel'
+				_zsh_system_clipboard_suggest_to_install 'wl-clipboard / xsel / xclip'
 			fi
 			;;
 		*)
