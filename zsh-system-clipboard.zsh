@@ -46,6 +46,8 @@ if [[ "$ZSH_SYSTEM_CLIPBOARD_METHOD" == "" ]]; then
 				ZSH_SYSTEM_CLIPBOARD_METHOD="xsc"
 			elif _zsh_system_clipboard_command_exists xclip; then
 				ZSH_SYSTEM_CLIPBOARD_METHOD="xcc"
+			elif _zsh_system_clipboard_command_exists clip.exe; then
+				ZSH_SYSTEM_CLIPBOARD_METHOD="wsl"
 			else
 				_zsh_system_clipboard_suggest_to_install 'wl-clipboard / xsel / xclip'
 			fi
@@ -67,6 +69,10 @@ function zsh-system-clipboard-set-wlc(){ wl-copy; }
 function zsh-system-clipboard-get-wlc(){ wl-paste -n; }
 function zsh-system-clipboard-set-wlp(){ wl-copy -p; }
 function zsh-system-clipboard-get-wlp(){ wl-paste -p -n; }
+# wsl stands for 'Windows Subsystem for Linux'
+# Based on: https://github.com/neovim/neovim/wiki/FAQ#how-to-use-the-windows-clipboard-from-wsl
+function zsh-system-clipboard-set-wsl(){ clip.exe; }
+function zsh-system-clipboard-get-wsl(){ powershell.exe -c '[Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))'; }
 # xs{c,p} stands for 'xsel with {CLIPBOARD,PRIMARY} selection'
 function zsh-system-clipboard-set-xsc(){ xsel -b -i; }
 function zsh-system-clipboard-get-xsc(){ xsel -b -o; }
