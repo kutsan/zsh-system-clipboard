@@ -67,25 +67,25 @@ This is the function that's inside `zsh-system-clipboard.zsh` which actually bin
 
 ```zsh
 function () {
-	local binded_keys i parts key cmd keymap
-	for keymap in vicmd visual emacs; do
-		binded_keys=(${(f)"$(bindkey -M $keymap)"})
-		for (( i = 1; i < ${#binded_keys[@]}; ++i )); do
-			parts=("${(z)binded_keys[$i]}")
-			key="${parts[1]}"
-			cmd="${parts[2]}"
-			if (( $+functions[zsh-system-clipboard-$keymap-$cmd] )); then
-				eval bindkey -M $keymap $key zsh-system-clipboard-$keymap-$cmd
-			fi
-		done
-	done
+  local binded_keys i parts key cmd keymap
+  for keymap in vicmd visual emacs; do
+    binded_keys=(${(f)"$(bindkey -M $keymap)"})
+    for (( i = 1; i < ${#binded_keys[@]}; ++i )); do
+      parts=("${(z)binded_keys[$i]}")
+      key="${parts[1]}"
+      cmd="${parts[2]}"
+      if (( $+functions[zsh-system-clipboard-$keymap-$cmd] )); then
+        eval bindkey -M $keymap $key zsh-system-clipboard-$keymap-$cmd
+      fi
+    done
+  done
 }
 ```
 
 You can change the line `eval bindkey -M $keymap $key zsh-system-clipboard-$keymap-$cmd` this way:
 
 ```zsh
-				eval bindkey -M $keymap \"\ \"$key zsh-system-clipboard-$keymap-$cmd
+        eval bindkey -M $keymap \"\ \"$key zsh-system-clipboard-$keymap-$cmd
 ```
 
 And to make this change useful, unbind the single `" "` with:
