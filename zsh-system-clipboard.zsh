@@ -62,6 +62,8 @@ unfunction _zsh_system_clipboard_error
 unfunction _zsh_system_clipboard_suggest_to_install
 unfunction _zsh_system_clipboard_command_exists
 
+function zsh-system-clipboard-set-tmate(){ tmate load-buffer -; }
+function zsh-system-clipboard-get-tmate(){ tmate show-buffer; }
 function zsh-system-clipboard-set-tmux(){ tmux load-buffer -; }
 function zsh-system-clipboard-get-tmux(){ tmux show-buffer; }
 # wl{c,p} stands for 'wayland with {CLIPBOARD,PRIMARY} selection'

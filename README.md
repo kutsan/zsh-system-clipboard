@@ -8,7 +8,7 @@ Zsh plugin that adds key bindings support for ZLE (Zsh Line Editor) clipboard op
 
 By default, ZLE has its own clipboard buffer. So, using keys like <kbd>y</kbd> inside ZLE's normal mode for yanking operations will not send that yanked text to system clipboard. It will live inside ZLE and using <kbd>C-v</kbd> won't paste that text in another program. This plugin synchronizes your system clipboard with ZLE buffers while it's not overriding anything. You can still use ZLE's <kbd>"</kbd> register if you want to.
 
-It also synchronizes [tmux](https://github.com/tmux/tmux) clipboard buffers if tmux available and the `ZSH_SYSTEM_CLIPBOARD_TMUX_SUPPORT` variable is set to `'true'`. See _Options_ section for more details.
+It also supports synchronizing to [tmux](https://github.com/tmux/tmux)' (or [tmate](https://tmate.io/)'s) clipboard instead of the system's clipboard . See _Options_ section for more details.
 
 ## Installation
 
@@ -47,7 +47,7 @@ Sets the clipboard method to either of these options:
 
 | method value | meaning |
 | ------------ | ------- |
-| `tmux`       | Use Tmux's buffer as a clipboard - useful on systems without X / wayland, requires `set-option -g set-clipboard on` in `~/.tmux.conf` |
+| `tmux`/`tmate` | Use Tmux/Tmate's buffer as a clipboard - useful on systems without X / wayland |
 | `xsc`        | Use [`xsel`](https://github.com/kfish/xsel) with 'CLIPBOARD' selection. |
 | `xsp`        | Use [`xsel`](https://github.com/kfish/xsel) with 'PRIMARY' selection. |
 | `xcc`        | Use [`xclip`](https://github.com/astrand/xclip) with 'CLIPBOARD' selection. |
