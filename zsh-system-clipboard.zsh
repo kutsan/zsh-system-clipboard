@@ -52,6 +52,11 @@ if [[ "$ZSH_SYSTEM_CLIPBOARD_METHOD" == "" ]]; then
         _zsh_system_clipboard_suggest_to_install 'wl-clipboard / xsel / xclip'
       fi
       ;;
+    msys)
+      if _zsh_system_clipboard_command_exists clip.exe; then
+        ZSH_SYSTEM_CLIPBOARD_METHOD="wsl"
+      fi
+      ;;
     *)
       _zsh_system_clipboard_error 'Unsupported system.'
       return 1
