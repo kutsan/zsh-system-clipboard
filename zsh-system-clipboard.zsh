@@ -271,6 +271,29 @@ function zsh-system-clipboard-visual-put-replace-selection(){
 }
 zle -N zsh-system-clipboard-visual-put-replace-selection
 
+# From some reason, in vanilla ZSH, P is not acting like in Vim, as apparent by
+# looking at `bindkey -M visual | grep P`. Here's the correct behavior quoted
+# from vim's `:help v_P` text:
+#
+# > |P| in Visual mode puts text without setting the default register. You can
+# > repeat the change, but the deleted text cannot be used.  If you do need it
+# > you can use |p| with another register.  E.g., yank the text to copy, Visually
+# > select the text to replace and use "0p .  You can repeat this as many times
+# > as you like, and the unnamed register will be changed each time.
+#
+# Hence we implement it ourselves manually, as opposed to the other widgets
+# binded below automatically.
+function zsh-system-clipboard-visual-put-selection(){
+  # This acts similarly to the above, but because we don't need to set anything
+  # to the clipboard, it is implemented very simply.
+  zle vi-delete
+  zsh-system-clipboard-vicmd-vi-put-before
+}
+zle -N zsh-system-clipboard-visual-put-selection
+if [[ ! -n "$ZSH_SYSTEM_CLIPBOARD_DISABLE_DEFAULT_MAPS" ]]; then
+  bindkey -M visual P zsh-system-clipboard-visual-put-selection
+fi
+
 function zsh-system-clipboard-visual-vi-delete(){
   zsh-system-clipboard-vicmd-vi-delete
 }
